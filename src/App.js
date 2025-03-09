@@ -4,6 +4,7 @@ import raceData from "./data/data.json";
 import RaceResultsTable from "./components/RaceResultsTable";
 import QualResultsTable from "./components/QualResultsTable";
 import FantasyPointsTable from "./components/FantasyPointsTable";
+import OverviewTable from "./components/OverviewTable";
 
 
 const trackName = "Phoenix Raceway"; // Placeholder for track name
@@ -12,7 +13,7 @@ const groupsOrder = ["I", "I-II", "II", "III", "IV"]
 const App = () => {
   const [useStarGroup, setUseStarGroup] = useState(false);
   const [selectedGroup, setSelectedGroup] = useState("I-II");
-  const [groups, setGroups] = useState([]);
+  const [groups, setGroups] = useState(["I-II", "III", "IV"]);
   const [drivers, setDrivers] = useState([]);
   const [raceDates, setRaceDates] = useState([]);
   const [selectedTab, setSelectedTab] = useState(0);
@@ -22,13 +23,8 @@ const App = () => {
     const extractedGroups = [...new Set(raceData.map((entry) => entry[groupType]))].filter(Boolean);
     extractedGroups.sort((a, b) => groupsOrder.indexOf(a) - groupsOrder.indexOf(b));
     setGroups(extractedGroups);
-    useStarGroup ? setSelectedGroup("I") : setSelectedGroup("I-II"); // Reset selection when switching modes
+    setSelectedGroup(useStarGroup ? "I" : "I-II"); // Reset selection when switching modes
   }, [useStarGroup]);
-
-  useEffect(() => {
-    const groupType = useStarGroup ? "star_group" : "open_group";
-    setGroups([...new Set(raceData.map((entry) => entry[groupType]))]);
-  }, [setUseStarGroup]);
 
   useEffect(() => {
     if (selectedGroup) {
@@ -78,6 +74,7 @@ const App = () => {
       {selectedGroup && (
         <Box sx={{ borderBottom: 1, borderColor: "divider", mb: 3 }}>
           <Tabs value={selectedTab} onChange={(event, newValue) => setSelectedTab(newValue)} centered>
+            <Tab label="Overview" />
             <Tab label="Race Finish Results" />
             <Tab label="Race Start Stats" />
             <Tab label="Fantasy Points" />
@@ -89,10 +86,11 @@ const App = () => {
       {/* 🔹 Render the Correct Table Based on Selected Tab */}
       {selectedGroup && drivers.length > 0 && raceDates.length > 0 && (
         <>
-          {selectedTab === 0 && <RaceResultsTable group={selectedGroup} drivers={drivers} raceDates={raceDates} track={trackName} useStar={useStarGroup}/>}
-          {selectedTab === 1 && <QualResultsTable group={selectedGroup} drivers={drivers} raceDates={raceDates} track={trackName} useStar={useStarGroup}/>}
-          {selectedTab === 2 && <FantasyPointsTable group={selectedGroup} drivers={drivers} raceDates={raceDates} track={trackName} useStar={useStarGroup}/>}
-          {selectedTab === 3 && <p>Driver Rating Table (To be implemented)</p>}
+          {selectedTab === 0 && <OverviewTable group={selectedGroup} drivers={drivers} raceDates={raceDates} track={trackName} useStar={useStarGroup}/>}
+          {selectedTab === 1 && <RaceResultsTable group={selectedGroup} drivers={drivers} raceDates={raceDates} track={trackName} useStar={useStarGroup}/>}
+          {selectedTab === 2 && <QualResultsTable group={selectedGroup} drivers={drivers} raceDates={raceDates} track={trackName} useStar={useStarGroup}/>}
+          {selectedTab === 3 && <FantasyPointsTable group={selectedGroup} drivers={drivers} raceDates={raceDates} track={trackName} useStar={useStarGroup}/>}
+          {selectedTab === 4 && <p>Driver Rating Table (To be implemented)</p>}
         </>
       )}
     </Container>
