@@ -28,13 +28,13 @@ const OverviewTable = ({ group, drivers, raceDates, track, useStar }) => {
             <TableRow key={index}>
               <TableCell sx={{ width: "120px" }}>{driver}</TableCell>
               <TableCell sx={{ width: "80px", textAlign: "center" }}>
-                {getAverageFinishPosition(raceData, driver, group, track, excludePlayoffs, useStar)}
+                {getAverageFinishPosition(raceData, driver, group, raceDates, excludePlayoffs, useStar)}
               </TableCell>
               <TableCell sx={{ width: "80px", textAlign: "center" }}>
-                {getAverageStartPosition(raceData, driver, group, track, excludePlayoffs, useStar)}
+                {getAverageStartPosition(raceData, driver, group, raceDates, excludePlayoffs, useStar)}
               </TableCell>
               <TableCell sx={{ width: "80px", textAlign: "center" }}>
-                {getAverageFantasyPoints(raceData, driver, group, track, excludePlayoffs, useStar)}
+                {getAverageFantasyPoints(raceData, driver, group, raceDates, excludePlayoffs, useStar)}
               </TableCell>
             </TableRow>
           ))}

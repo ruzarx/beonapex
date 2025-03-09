@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Container, Select, MenuItem, FormControlLabel, Switch, Tabs, Tab, Box } from "@mui/material";
 import raceData from "./data/data.json";
 import nextRaceData from "./data/next_race_data.json";
+import trackSimilarity from "./data/track_similarity.json";
 import RaceResultsTable from "./components/RaceResultsTable";
 import QualResultsTable from "./components/QualResultsTable";
 import FantasyPointsTable from "./components/FantasyPointsTable";
@@ -17,6 +18,8 @@ const App = () => {
   const [groups, setGroups] = useState(["I-II", "III", "IV"]);
   const [drivers, setDrivers] = useState([]);
   const [raceDates, setRaceDates] = useState([]);
+  const [similarRaceDates, setSimilarRaceDates] = useState([]);
+  const [allRaceDates, setAllRaceDates] = useState([]);
   const [selectedTab, setSelectedTab] = useState(0);
 
   useEffect(() => {
@@ -35,14 +38,24 @@ const App = () => {
       const trackRaces = raceData
         .filter((entry) => entry.track_name === nextRaceTrack && entry.season_year >= 2021)
         .map((entry) => ({ season: entry.season_year, race_date: entry.race_date }));
-
-      // Sort chronologically
       trackRaces.sort((a, b) => new Date(b.race_date) - new Date(a.race_date));
-
-      // Extract unique race dates
       setRaceDates([...new Set(trackRaces.map((race) => race.race_date))]);
 
-      // Extract unique drivers for selected group
+      const similarRaces = raceData
+      .filter((entry) => {
+        const similarTracks = trackSimilarity[nextRaceTrack] || [];
+        if (!Array.isArray(similarTracks)) return false;
+        return similarTracks.includes(entry.track_name) && entry.season_year >= 2021;
+      })
+        .map((entry) => ({ season: entry.season_year, race_date: entry.race_date }));
+
+      setSimilarRaceDates([...new Set(similarRaces.map((race) => race.race_date))]);
+
+      const allRaces = raceData
+        .filter((entry) => entry.season_year >= 2021)
+        .map((entry) => ({ season: entry.season_year, race_date: entry.race_date }));
+      setAllRaceDates([...new Set(allRaces.map((race) => race.race_date))]);
+
       const groupDrivers = [...new Set(
         raceData
           .filter((entry) => entry[groupType] === selectedGroup)
@@ -88,9 +101,9 @@ const App = () => {
       {selectedGroup && drivers.length > 0 && raceDates.length > 0 && (
         <>
           {selectedTab === 0 && <OverviewTable group={selectedGroup} drivers={drivers} raceDates={raceDates} track={nextRaceTrack} useStar={useStarGroup}/>}
-          {selectedTab === 1 && <RaceResultsTable group={selectedGroup} drivers={drivers} raceDates={raceDates} track={nextRaceTrack} useStar={useStarGroup}/>}
-          {selectedTab === 2 && <QualResultsTable group={selectedGroup} drivers={drivers} raceDates={raceDates} track={nextRaceTrack} useStar={useStarGroup}/>}
-          {selectedTab === 3 && <FantasyPointsTable group={selectedGroup} drivers={drivers} raceDates={raceDates} track={nextRaceTrack} useStar={useStarGroup}/>}
+          {selectedTab === 1 && <RaceResultsTable group={selectedGroup} drivers={drivers} raceDates={raceDates} similarRaceDates={similarRaceDates} allRaceDates={allRaceDates} track={nextRaceTrack} useStar={useStarGroup}/>}
+          {selectedTab === 2 && <QualResultsTable group={selectedGroup} drivers={drivers} raceDates={raceDates} similarRaceDates={similarRaceDates} allRaceDates={allRaceDates} track={nextRaceTrack} useStar={useStarGroup}/>}
+          {selectedTab === 3 && <FantasyPointsTable group={selectedGroup} drivers={drivers} raceDates={raceDates} similarRaceDates={similarRaceDates} allRaceDates={allRaceDates} track={nextRaceTrack} useStar={useStarGroup}/>}
           {selectedTab === 4 && <p>Driver Rating Table (To be implemented)</p>}
         </>
       )}

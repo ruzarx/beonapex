@@ -3,7 +3,7 @@ import { TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody
 import raceData from "../data/data.json"; 
 import { getAverageFantasyPoints, getFantasyPoints, getSeasonLabel } from "../utils/raceUtils";
 
-const FantasyPointsTable = ({ group, drivers, raceDates, track, useStar }) => {
+const FantasyPointsTable = ({ group, drivers, raceDates, similarRaceDates, allRaceDates, track, useStar }) => {
   const [excludePlayoffs, setExcludePlayoffs] = useState(false);
 
   return (
@@ -19,6 +19,8 @@ const FantasyPointsTable = ({ group, drivers, raceDates, track, useStar }) => {
           <TableRow>
             <TableCell sx={{ width: "120px", fontWeight: "bold" }}>Driver</TableCell>
             <TableCell sx={{ width: "80px", textAlign: "center" }}>Avg. Fantasy Pts</TableCell>
+            <TableCell sx={{ width: "80px", textAlign: "center" }}>Avg. Similar Tracks Fantasy Pts</TableCell>
+            <TableCell sx={{ width: "80px", textAlign: "center" }}>Avg. All Tracks Fantasy Pts</TableCell>
             {raceDates.map((race, index) => (
               <TableCell key={index} sx={{ width: "80px", textAlign: "center" }}>
                 {getSeasonLabel(race)}
@@ -31,7 +33,13 @@ const FantasyPointsTable = ({ group, drivers, raceDates, track, useStar }) => {
             <TableRow key={index}>
               <TableCell sx={{ width: "120px" }}>{driver}</TableCell>
               <TableCell sx={{ width: "80px", textAlign: "center" }}>
-                {getAverageFantasyPoints(raceData, driver, group, track, excludePlayoffs, useStar)}
+                {getAverageFantasyPoints(raceData, driver, group, raceDates, excludePlayoffs, useStar)}
+              </TableCell>
+              <TableCell sx={{ width: "80px", textAlign: "center" }}>
+                {getAverageFantasyPoints(raceData, driver, group, similarRaceDates, excludePlayoffs, useStar)}
+              </TableCell>
+              <TableCell sx={{ width: "80px", textAlign: "center" }}>
+                {getAverageFantasyPoints(raceData, driver, group, allRaceDates, excludePlayoffs, useStar)}
               </TableCell>
               {raceDates.map((race, idx) => (
                 <TableCell key={idx} sx={{ width: "80px", textAlign: "center" }}>

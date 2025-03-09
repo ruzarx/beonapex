@@ -1,18 +1,20 @@
 // 📌 Utility function to filter driver races based on playoffs
-export const filterDriverRaces = (raceData, driver, group, track, excludePlayoffs, useStar) => {
+export const filterDriverRaces = (raceData, driver, group, raceDates, excludePlayoffs, useStar) => {
     const groupType = useStar ? 'star_group' : 'open_group';
     return raceData.filter(
       (entry) =>
         entry.driver_name === driver &&
         entry[groupType] === group &&
-        entry.track_name === track &&
+        raceDates.includes(entry.race_date) && // ✅ FIXED
         (!excludePlayoffs || entry.season_stage === "season") // Exclude playoffs if toggle is on
     );
+    
   };
-  
+
   // 📌 Utility function to calculate average finish position
-  export const getAverageFinishPosition = (raceData, driver, group, track, excludePlayoffs, useStar) => {
-    const driverRaces = filterDriverRaces(raceData, driver, group, track, excludePlayoffs, useStar);
+  export const getAverageFinishPosition = (raceData, driver, group, raceDates, excludePlayoffs, useStar) => {
+    console.log(raceDates);
+    const driverRaces = filterDriverRaces(raceData, driver, group, raceDates, excludePlayoffs, useStar);
     if (driverRaces.length === 0) return "-";
     const totalFinishPositions = driverRaces.reduce((sum, race) => sum + race.race_pos, 0);
     return (totalFinishPositions / driverRaces.length).toFixed(2);
@@ -33,8 +35,8 @@ export const filterDriverRaces = (raceData, driver, group, track, excludePlayoff
     return raceEntry ? raceEntry.race_pos : "-";
   };
 
-  export const getAverageStartPosition = (raceData, driver, group, track, excludePlayoffs, useStar) => {
-    const driverRaces = filterDriverRaces(raceData, driver, group, track, excludePlayoffs, useStar);
+  export const getAverageStartPosition = (raceData, driver, group, raceDates, excludePlayoffs, useStar) => {
+    const driverRaces = filterDriverRaces(raceData, driver, group, raceDates, excludePlayoffs, useStar);
     if (driverRaces.length === 0) return "-";
     const totalStartPositions = driverRaces.reduce((sum, race) => sum + race.quali_pos, 0);
     return (totalStartPositions / driverRaces.length).toFixed(2);
@@ -60,15 +62,15 @@ export const filterDriverRaces = (raceData, driver, group, track, excludePlayoff
       (entry) =>
         entry.driver_name === driver &&
         entry[groupType] === group &&
-        entry.race_date == raceDate &&
+        entry.race_date === raceDate &&
         entry.track_name === track &&
         (!excludePlayoffs || entry.season_stage === "season")
     );
     return raceEntry ? raceEntry.finish_position_points + raceEntry.stage_points : "-";
   };
 
-  export const getAverageFantasyPoints = (raceData, driver, group, track, excludePlayoffs, useStar) => {
-    const driverRaces = filterDriverRaces(raceData, driver, group, track, excludePlayoffs, useStar);
+  export const getAverageFantasyPoints = (raceData, driver, group, raceDates, excludePlayoffs, useStar) => {
+    const driverRaces = filterDriverRaces(raceData, driver, group, raceDates, excludePlayoffs, useStar);
     if (driverRaces.length === 0) return "-";
     const totalFantasyPoints = driverRaces.reduce((sum, race) => sum + race.finish_position_points + race.stage_points, 0);
     return (totalFantasyPoints / driverRaces.length).toFixed(2);
