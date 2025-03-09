@@ -3,10 +3,11 @@ import { Container, Select, MenuItem, FormControlLabel, Switch, Tabs, Tab, Box }
 import raceData from "./data/data.json";
 import RaceResultsTable from "./components/RaceResultsTable";
 import QualResultsTable from "./components/QualResultsTable";
+import FantasyPointsTable from "./components/FantasyPointsTable";
 
 
 const trackName = "Phoenix Raceway"; // Placeholder for track name
-
+const groupsOrder = ["I", "I-II", "II", "III", "IV"]
 
 const App = () => {
   const [useStarGroup, setUseStarGroup] = useState(false);
@@ -19,6 +20,7 @@ const App = () => {
   useEffect(() => {
     const groupType = useStarGroup ? "star_group" : "open_group";
     const extractedGroups = [...new Set(raceData.map((entry) => entry[groupType]))].filter(Boolean);
+    extractedGroups.sort((a, b) => groupsOrder.indexOf(a) - groupsOrder.indexOf(b));
     setGroups(extractedGroups);
     useStarGroup ? setSelectedGroup("I") : setSelectedGroup("I-II"); // Reset selection when switching modes
   }, [useStarGroup]);
@@ -89,7 +91,7 @@ const App = () => {
         <>
           {selectedTab === 0 && <RaceResultsTable group={selectedGroup} drivers={drivers} raceDates={raceDates} track={trackName} useStar={useStarGroup}/>}
           {selectedTab === 1 && <QualResultsTable group={selectedGroup} drivers={drivers} raceDates={raceDates} track={trackName} useStar={useStarGroup}/>}
-          {selectedTab === 2 && <p>Fantasy Points Table (To be implemented)</p>}
+          {selectedTab === 2 && <FantasyPointsTable group={selectedGroup} drivers={drivers} raceDates={raceDates} track={trackName} useStar={useStarGroup}/>}
           {selectedTab === 3 && <p>Driver Rating Table (To be implemented)</p>}
         </>
       )}

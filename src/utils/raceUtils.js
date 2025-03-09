@@ -51,8 +51,27 @@ export const filterDriverRaces = (raceData, driver, group, track, excludePlayoff
         entry.track_name === track &&
         (!excludePlayoffs || entry.season_stage === "season")
     );
-    console.log(group, raceEntry);
     return raceEntry ? raceEntry.quali_pos : "-";
+  };
+
+  export const getFantasyPoints = (raceData, driver, raceDate, group, track, excludePlayoffs, useStar) => {
+    const groupType  = useStar ? 'star_group' : 'open_group';
+    const raceEntry = raceData.find(
+      (entry) =>
+        entry.driver_name === driver &&
+        entry[groupType] === group &&
+        entry.race_date == raceDate &&
+        entry.track_name === track &&
+        (!excludePlayoffs || entry.season_stage === "season")
+    );
+    return raceEntry ? raceEntry.finish_position_points + raceEntry.stage_points : "-";
+  };
+
+  export const getAverageFantasyPoints = (raceData, driver, group, track, excludePlayoffs, useStar) => {
+    const driverRaces = filterDriverRaces(raceData, driver, group, track, excludePlayoffs, useStar);
+    if (driverRaces.length === 0) return "-";
+    const totalFantasyPoints = driverRaces.reduce((sum, race) => sum + race.finish_position_points + race.stage_points, 0);
+    return (totalFantasyPoints / driverRaces.length).toFixed(2);
   };
   
   // 📌 Utility function to format dates as "Spring/Fall YEAR"
