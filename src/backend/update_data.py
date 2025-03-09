@@ -11,6 +11,8 @@ class DataProcessor:
         df, (next_race_data, last_race_data) = self.get_stats()
         with open('data/next_race_data.json', 'w') as file:
             json.dump(next_race_data, file)
+        with open('../../data/next_race_data.json', 'w') as file:
+            json.dump(next_race_data, file)
         with open('data/last_race_data.json', 'w') as file:
             json.dump(last_race_data, file)
         standings = pd.DataFrame(self.get_standings(

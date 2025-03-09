@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { Container, Select, MenuItem, FormControlLabel, Switch, Tabs, Tab, Box } from "@mui/material";
 import raceData from "./data/data.json";
+import nextRaceData from "./data/next_race_data.json";
 import RaceResultsTable from "./components/RaceResultsTable";
 import QualResultsTable from "./components/QualResultsTable";
 import FantasyPointsTable from "./components/FantasyPointsTable";
 import OverviewTable from "./components/OverviewTable";
 
 
-const trackName = "Phoenix Raceway"; // Placeholder for track name
+const nextRaceTrack = nextRaceData["next_race_track"];
 const groupsOrder = ["I", "I-II", "II", "III", "IV"]
 
 const App = () => {
@@ -32,7 +33,7 @@ const App = () => {
 
       // Extract races for selected track from 2021 onward
       const trackRaces = raceData
-        .filter((entry) => entry.track_name === trackName && entry.season_year >= 2021)
+        .filter((entry) => entry.track_name === nextRaceTrack && entry.season_year >= 2021)
         .map((entry) => ({ season: entry.season_year, race_date: entry.race_date }));
 
       // Sort chronologically
@@ -53,7 +54,7 @@ const App = () => {
 
   return (
     <Container sx={{ textAlign: "center", mt: 4 }}>
-      <h1>BOE NASCAR Fantasy 69XL/R34 - {trackName}</h1>
+      <h1>BOE NASCAR Fantasy 69XL/R34 - {nextRaceTrack}</h1>
 
       {/* 🔹 Toggle between Open and Star groups */}
       <FormControlLabel
@@ -86,10 +87,10 @@ const App = () => {
       {/* 🔹 Render the Correct Table Based on Selected Tab */}
       {selectedGroup && drivers.length > 0 && raceDates.length > 0 && (
         <>
-          {selectedTab === 0 && <OverviewTable group={selectedGroup} drivers={drivers} raceDates={raceDates} track={trackName} useStar={useStarGroup}/>}
-          {selectedTab === 1 && <RaceResultsTable group={selectedGroup} drivers={drivers} raceDates={raceDates} track={trackName} useStar={useStarGroup}/>}
-          {selectedTab === 2 && <QualResultsTable group={selectedGroup} drivers={drivers} raceDates={raceDates} track={trackName} useStar={useStarGroup}/>}
-          {selectedTab === 3 && <FantasyPointsTable group={selectedGroup} drivers={drivers} raceDates={raceDates} track={trackName} useStar={useStarGroup}/>}
+          {selectedTab === 0 && <OverviewTable group={selectedGroup} drivers={drivers} raceDates={raceDates} track={nextRaceTrack} useStar={useStarGroup}/>}
+          {selectedTab === 1 && <RaceResultsTable group={selectedGroup} drivers={drivers} raceDates={raceDates} track={nextRaceTrack} useStar={useStarGroup}/>}
+          {selectedTab === 2 && <QualResultsTable group={selectedGroup} drivers={drivers} raceDates={raceDates} track={nextRaceTrack} useStar={useStarGroup}/>}
+          {selectedTab === 3 && <FantasyPointsTable group={selectedGroup} drivers={drivers} raceDates={raceDates} track={nextRaceTrack} useStar={useStarGroup}/>}
           {selectedTab === 4 && <p>Driver Rating Table (To be implemented)</p>}
         </>
       )}
