@@ -16,6 +16,7 @@ class FeatureProcessor:
     def load_data_csv(self) -> pd.DataFrame:
         res = pd.read_csv('data/race_results.csv')
         race_data = pd.read_csv('data/race_data.csv')
+        print(race_data.head())
         race_data_cols = [col for col in race_data.columns if col not in ['race_name']]
         df = res.merge(race_data[race_data_cols], on=['season_year', 'race_number'], how='inner')
 

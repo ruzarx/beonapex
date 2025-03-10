@@ -19,13 +19,13 @@ penalties = {
         'type': 'race_win',
         'race': 23,
     },
-    # 3: {
-    #     'season': 2025,
-    #     'driver_name': 'Austin Cindric',
-    #     'type': 'season_points',
-    #     'amount': 50,
-    #     'race': 3,
-    # },
+    3: {
+        'season': 2025,
+        'driver_name': 'Austin Cindric',
+        'type': 'season_points',
+        'amount': 50,
+        'race': 3,
+    },
     4: {
         'season': 2025,
         'driver_name': 'Todd Gilliland',
@@ -38,13 +38,6 @@ penalties = {
         'driver_name': 'Cody Ware',
         'type': 'season_points',
         'amount': 10,
-        'race': 2,
-    },
-    6: {
-        'season': 2025,
-        'driver_name': 'Chase Briscoe',
-        'type': 'season_points',
-        'amount': 100,
         'race': 2,
     },
 }

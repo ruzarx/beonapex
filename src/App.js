@@ -7,6 +7,7 @@ import RaceResultsTable from "./components/RaceResultsTable";
 import QualResultsTable from "./components/QualResultsTable";
 import FantasyPointsTable from "./components/FantasyPointsTable";
 import OverviewTable from "./components/OverviewTable";
+import DriverPerformanceChart from "./components/DriverPerformanceChart";
 
 
 const nextRaceTrack = nextRaceData["next_race_track"];
@@ -93,6 +94,7 @@ const App = () => {
             <Tab label="Race Start Stats" />
             <Tab label="Fantasy Points" />
             <Tab label="Driver Rating" />
+            <Tab label="Driver Performance" />
           </Tabs>
         </Box>
       )}
@@ -105,6 +107,7 @@ const App = () => {
           {selectedTab === 2 && <QualResultsTable group={selectedGroup} drivers={drivers} raceDates={raceDates} similarRaceDates={similarRaceDates} allRaceDates={allRaceDates} track={nextRaceTrack} useStar={useStarGroup}/>}
           {selectedTab === 3 && <FantasyPointsTable group={selectedGroup} drivers={drivers} raceDates={raceDates} similarRaceDates={similarRaceDates} allRaceDates={allRaceDates} track={nextRaceTrack} useStar={useStarGroup}/>}
           {selectedTab === 4 && <p>Driver Rating Table (To be implemented)</p>}
+          {selectedTab === 5 && <DriverPerformanceChart raceData={raceData} drivers={drivers} />}
         </>
       )}
     </Container>
