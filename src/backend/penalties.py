@@ -26,18 +26,18 @@ penalties = {
     #     'amount': 50,
     #     'race': 3,
     # },
-    4: {
-        'season': 2025,
-        'driver_name': 'Todd Gilliland',
-        'type': 'season_points',
-        'amount': 10,
-        'race': 2,
-    },
-    5: {
-        'season': 2025,
-        'driver_name': 'Cody Ware',
-        'type': 'season_points',
-        'amount': 10,
-        'race': 2,
-    },
+    # 4: {
+    #     'season': 2025,
+    #     'driver_name': 'Todd Gilliland',
+    #     'type': 'season_points',
+    #     'amount': 10,
+    #     'race': 2,
+    # },
+    # 5: {
+    #     'season': 2025,
+    #     'driver_name': 'Cody Ware',
+    #     'type': 'season_points',
+    #     'amount': 10,
+    #     'race': 2,
+    # },
 }
