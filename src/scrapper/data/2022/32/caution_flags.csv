@@ -1,0 +1,11 @@
+Condition,From Lap,To Lap,# Of Laps,Reason,Free Pass
+green_flag,1,26,26,,
+yellow_flag,27,29,3,end of stage 1,none
+green_flag,30,51,22,,
+yellow_flag,52,54,3,end of stage 2,none
+green_flag,55,104,50,,
+yellow_flag,105,106,2,debris,#47
+green_flag,107,108,2,,
+yellow_flag,109,110,2,debris,#7
+green_flag,111,112,2,,
+Percent of race run under caution: 8.9%             Average green flag run: 20.4 laps

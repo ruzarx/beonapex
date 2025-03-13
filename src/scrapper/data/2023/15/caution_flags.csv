@@ -1,0 +1,25 @@
+Condition,From Lap,To Lap,# Of Laps,Reason,Free Pass
+green_flag,1,2,2,,
+yellow_flag,3,8,6,"#45,47 accident 1 [red flag: 1:45:09]",none
+green_flag,9,46,38,,
+yellow_flag,47,53,7,end of stage 1,#77
+green_flag,54,54,1,,
+yellow_flag,55,58,4,"#1,34 accident turn 2",#51
+green_flag,59,91,33,,
+yellow_flag,92,102,11,#7 accident turn 1,#78
+green_flag,103,141,39,,
+yellow_flag,142,148,7,end of stage 2,#15
+green_flag,149,175,27,,
+yellow_flag,176,183,8,#45 accident turn 2,#15
+green_flag,184,198,15,,
+yellow_flag,199,203,5,#42 accident 1 [red flag: 9:19],#6
+green_flag,204,205,2,,
+yellow_flag,206,209,4,"#2,20 accident turn 2",#6
+green_flag,210,213,4,,
+yellow_flag,214,217,4,#15 stalled frontstretch,#14
+green_flag,218,219,2,,
+yellow_flag,220,225,6,"#2,3,47 accident 1 [red flag: 4:37]",#15
+green_flag,226,236,11,,
+yellow_flag,237,241,5,#23 accident turn 1,#15
+green_flag,242,243,2,,
+Percent of race run under caution: 27.6%             Average green flag run: 14.7 laps

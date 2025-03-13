@@ -1,0 +1,31 @@
+Condition,From Lap,To Lap,# Of Laps,Reason,Free Pass
+green_flag,1,14,14,,
+yellow_flag,15,25,11,competition,#10
+green_flag,26,50,25,,
+yellow_flag,51,55,5,#14 spun turn 2,#78
+green_flag,56,75,20,,
+yellow_flag,76,76,1,#77 accident turn 3,#4
+green_flag,77,92,16,,
+yellow_flag,93,96,4,#48 spun turn 4,#41
+green_flag,97,98,2,,
+yellow_flag,99,105,7,"#4,7,16,48 accident backstretch",#51
+green_flag,106,114,9,,
+yellow_flag,115,118,4,"#3,6 accident turn 2",#16
+green_flag,119,126,8,,
+yellow_flag,127,131,5,debris backstretch,#10
+green_flag,132,132,1,,
+yellow_flag,133,139,7,"#7,21,23 accident backstretch",#16
+green_flag,140,150,11,,
+yellow_flag,151,151,1,end of stage 2,#16
+green_flag,152,162,11,,
+yellow_flag,163,167,5,"#9,47,51,99 accident turn 3",#16
+green_flag,168,169,2,,
+yellow_flag,170,175,6,#43 accident turn 2,#51
+green_flag,176,178,3,,
+yellow_flag,179,183,5,#38 spun turn 2,#16
+green_flag,184,203,20,,
+yellow_flag,204,210,7,#47 accident turn 2,#16
+green_flag,211,212,2,,
+yellow_flag,213,226,14,"#3,10,45 accident turn 1",#19
+green_flag,227,250,24,,
+Percent of race run under caution: 32.8%             Average green flag run: 11.2 laps
