@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody, Checkbox, FormControlLabel } from "@mui/material";
 import raceData from "../data/data.json"; 
-import { getAverageFinishPosition, getFinishPosition, getSeasonLabel } from "../utils/raceUtils";
+import { getAverageFeatureValue, getFeatureValue, getSeasonLabel } from "../utils/raceUtils";
 
-const RatingTable = ({ group, drivers, raceDates, similarRaceDates, allRaceDates, track, useStar }) => {
+const RatingTable = ({ group, drivers, raceDates, similarRaceDates, allRaceDates, currentSeasonDates, track, useStar }) => {
   const [excludePlayoffs, setExcludePlayoffs] = useState(false);
 
   return (
@@ -21,6 +21,7 @@ const RatingTable = ({ group, drivers, raceDates, similarRaceDates, allRaceDates
             <TableCell sx={{ width: "80px", textAlign: "center" }}>Avg. Track Rating</TableCell>
             <TableCell sx={{ width: "80px", textAlign: "center" }}>Avg. Similar Tracks Rating</TableCell>
             <TableCell sx={{ width: "80px", textAlign: "center" }}>Avg. All Tracks Rating</TableCell>
+            <TableCell sx={{ width: "80px", textAlign: "center" }}>Avg. Current Season Rating</TableCell>
             {raceDates.map((race, index) => (
               <TableCell key={index} sx={{ width: "80px", textAlign: "center" }}>
                 {getSeasonLabel(race)}
@@ -33,17 +34,20 @@ const RatingTable = ({ group, drivers, raceDates, similarRaceDates, allRaceDates
             <TableRow key={index}>
               <TableCell sx={{ width: "120px" }}>{driver}</TableCell>
               <TableCell sx={{ width: "80px", textAlign: "center" }}>
-                {getAverageFinishPosition(raceData, driver, group, raceDates, excludePlayoffs, useStar)}
+                {getAverageFeatureValue(raceData, driver, group, raceDates, excludePlayoffs, useStar, "driver_rating")}
               </TableCell>
               <TableCell sx={{ width: "80px", textAlign: "center" }}>
-                {getAverageFinishPosition(raceData, driver, group, similarRaceDates, excludePlayoffs, useStar)}
+                {getAverageFeatureValue(raceData, driver, group, similarRaceDates, excludePlayoffs, useStar, "driver_rating")}
               </TableCell>
               <TableCell sx={{ width: "80px", textAlign: "center" }}>
-                {getAverageFinishPosition(raceData, driver, group, allRaceDates, excludePlayoffs, useStar)}
+                {getAverageFeatureValue(raceData, driver, group, allRaceDates, excludePlayoffs, useStar, "driver_rating")}
+              </TableCell>
+              <TableCell sx={{ width: "80px", textAlign: "center" }}>
+                {getAverageFeatureValue(raceData, driver, group, currentSeasonDates, excludePlayoffs, useStar, "driver_rating")}
               </TableCell>
               {raceDates.map((race, idx) => (
                 <TableCell key={idx} sx={{ width: "80px", textAlign: "center" }}>
-                  {getFinishPosition(raceData, driver, race, group, track, excludePlayoffs, useStar)}
+                  {getFeatureValue(raceData, driver, race, group, track, excludePlayoffs, useStar, "driver_rating")}
                 </TableCell>
               ))}
             </TableRow>

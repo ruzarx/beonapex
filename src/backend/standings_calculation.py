@@ -8,6 +8,7 @@ def standings_calculation(raw_data: pd.DataFrame, current_race: int, season: int
     season_points = {driver: 0 for driver in all_drivers}
     pure_season_points = {driver: 0 for driver in all_drivers}
     season_wins = {}
+    positions = {driver: [] for driver in all_drivers}
     playoff_16_wins = {}
     playoff_12_wins = {}
     playoff_8_wins = {}
@@ -26,6 +27,7 @@ def standings_calculation(raw_data: pd.DataFrame, current_race: int, season: int
                 race_points = race_data[race_data['driver_name'] == driver]['race_season_points'].values[0]
                 season_points[driver] += race_points
                 pure_season_points[driver] += race_points
+                positions[driver].append(race_data[race_data['driver_name'] == driver]['race_pos'].values[0])
                 playoff_points[driver] += 5 * race_data[race_data['driver_name'] == driver]['wins'].values[0] + \
                     race_data[race_data['driver_name'] == driver]['stage_wins'].values[0]
                 if race_data[race_data['driver_name'] == driver]['wins'].values[0] == 1:
@@ -53,6 +55,7 @@ def standings_calculation(raw_data: pd.DataFrame, current_race: int, season: int
                 race_points = race_data[race_data['driver_name'] == driver]['race_season_points'].values[0]
                 season_points[driver] += race_points
                 pure_season_points[driver] += race_points
+                positions[driver].append(race_data[race_data['driver_name'] == driver]['race_pos'].values[0])
                 playoff_points[driver] += 5 * race_data[race_data['driver_name'] == driver]['wins'].values[0] + \
                     race_data[race_data['driver_name'] == driver]['stage_wins'].values[0]
                 if race_data[race_data['driver_name'] == driver]['wins'].values[0] == 1:
@@ -76,6 +79,7 @@ def standings_calculation(raw_data: pd.DataFrame, current_race: int, season: int
                 race_points = race_data[race_data['driver_name'] == driver]['race_season_points'].values[0]
                 season_points[driver] += race_points
                 pure_season_points[driver] += race_points
+                positions[driver].append(race_data[race_data['driver_name'] == driver]['race_pos'].values[0])
                 playoff_points[driver] += 5 * race_data[race_data['driver_name'] == driver]['wins'].values[0] + \
                     race_data[race_data['driver_name'] == driver]['stage_wins'].values[0]
                 if race_data[race_data['driver_name'] == driver]['wins'].values[0] == 1:
@@ -102,6 +106,7 @@ def standings_calculation(raw_data: pd.DataFrame, current_race: int, season: int
                 race_points = race_data[race_data['driver_name'] == driver]['race_season_points'].values[0]
                 season_points[driver] += race_points
                 pure_season_points[driver] += race_points
+                positions[driver].append(race_data[race_data['driver_name'] == driver]['race_pos'].values[0])
                 playoff_points[driver] += 5 * race_data[race_data['driver_name'] == driver]['wins'].values[0] + \
                     race_data[race_data['driver_name'] == driver]['stage_wins'].values[0]
                 if race_data[race_data['driver_name'] == driver]['wins'].values[0] == 1:
@@ -129,12 +134,6 @@ def standings_calculation(raw_data: pd.DataFrame, current_race: int, season: int
                 else:
                     pure_season_points[driver] += race_data[race_data['driver_name'] == driver]['race_season_points'].values[0]
             champion = [driver for driver, _ in sorted(season_points.items(), key=lambda item: item[1], reverse=True)][0]
-            # # print(data[data['race_number'] == 32].sort_values('race_finish_points', ascending=False))
-            # print(playoff_16_drivers)
-            # print(set(playoff_16_drivers).difference(set(playoff_12_drivers)))
-            # print(set(playoff_12_drivers).difference(set(playoff_8_drivers)))
-            # print(set(playoff_8_drivers).difference(set(playoff_4_drivers)))
-            # print(playoff_4_drivers)
             for driver in season_points.keys():
                 if driver not in playoff_4_drivers:
                     season_points[driver] = pure_season_points[driver]
@@ -149,6 +148,12 @@ def standings_calculation(raw_data: pd.DataFrame, current_race: int, season: int
     data = raw_data[
         ['driver_name', 'stage_wins', 'race_stage_points', 'race_finish_points']
         ].groupby('driver_name', as_index=False).sum()
+    best_position = {}
+    n_best_positions = {}
+    for driver in all_drivers:
+        best_position[driver] = min(positions[driver])
+        n_best_positions[driver] = sum([1 if pos == min(positions[driver]) else 0 for pos in positions[driver]])
+        
     standings = pd.DataFrame({'driver_name': all_drivers,
                     'season_points': [season_points[driver] for driver in all_drivers],
                     'wins': [season_wins.get(driver, 0) + \
@@ -171,7 +176,9 @@ def standings_calculation(raw_data: pd.DataFrame, current_race: int, season: int
                     'qualified_to_12': [1 if driver in playoff_12_drivers else 0 for driver in all_drivers],
                     'qualified_to_8': [1 if driver in playoff_8_drivers else 0 for driver in all_drivers],
                     'qualified_to_final': [1 if driver in playoff_4_drivers else 0 for driver in all_drivers],
-                    'champion': [1 if driver == champion else 0 for driver in all_drivers]})
+                    'champion': [1 if driver == champion else 0 for driver in all_drivers],
+                    'best_position': [best_position[driver] for driver in all_drivers],
+                    'n_best_positions': [n_best_positions[driver] for driver in all_drivers],})
     return standings
 
 def apply_penalties(season: int,

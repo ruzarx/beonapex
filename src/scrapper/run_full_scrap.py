@@ -1,22 +1,22 @@
 import pandas as pd
 
-from db_scrapper import scrap_race
-from db_connectors import DBWriter
+# from db_scrapper import scrap_race
+# from db_connectors import DBWriter
 from file_parsers import NascarRaceDataParser, NascarResultsParser
 
-from flask import Flask
+# from flask import Flask
 
 from pathlib import Path
 
-app = Flask(__name__)
+# app = Flask(__name__)
 
-writer = DBWriter(app)
+# writer = DBWriter(app)
 
-writer.fill_tracks_info()
+# writer.fill_tracks_info()
 
 # available_races = writer.get_available_races()
 
-writer.fill_calendar_info()
+# writer.fill_calendar_info()
 
 def make_csv_from_res(data, season, race_number, name):
     path = Path(f'../backend/data/{name}.csv')

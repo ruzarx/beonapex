@@ -208,9 +208,12 @@ def compose_season_standings_data(raw_data: list[dict], race_number: str, curren
                                   'race_season_points': [res['race_season_points'] for res in raw_data],
                                   'initial_season_points': [res['race_season_points'] for res in raw_data],
                                   'race_number': [res['race_number'] for res in raw_data],
+                                  'race_pos': [res['race_pos'] for res in raw_data],
                                   })
     standings_data = standings_calculation(raw_standings_data, int(race_number), int(current_season))
-    standings_data = standings_data.sort_values(by=['season_points'], ascending=False)
+    standings_data = standings_data.sort_values(
+        by=['season_points', 'best_position', 'n_best_positions'],
+        ascending=[False, True, False])
     standings_data['pos'] = [x for x in range(1, len(standings_data) + 1)]
 
     results = []

@@ -34,6 +34,8 @@ class DataProcessor:
 
     def get_standings(self, season_year: int, race_number: int) -> pd.DataFrame:
         raw_data = pd.read_csv('data/standings.csv')
+        race_res = pd.read_csv('data/race_results.csv', usecols=['driver_name', 'season_year', 'race_number', 'race_pos'])
+        raw_data = raw_data.merge(race_res, on=['driver_name', 'season_year', 'race_number'])
         raw_data = raw_data[raw_data['season_year'] == season_year].reset_index(drop=True)
         raw_standings_data = []
         for result in raw_data.iterrows():
@@ -47,26 +49,16 @@ class DataProcessor:
                         "race_playoff_points": result[1]['race_playoff_points'],
                         "race_number": result[1]['race_number'],
                         "season_year": int(season_year),
+                        "race_pos": result[1]['race_pos'],
                      }
             raw_standings_data.append(current_row)
-        print(race_number, season_year)
         season_standings_data = data_processing.compose_season_standings_data(raw_standings_data,
                                                                               race_number,
                                                                               season_year)
         return season_standings_data
     
     def make_fantasy_groups(self, standings: pd.DataFrame) -> pd.DataFrame:
-        print(standings['race_number'].unique())
-        standings = standings.sort_values(['driver_name', 'season_year', 'race_number'])
-        standings['season_best_position'] = standings.groupby(['driver_name', 'season_year'])['position'].cummin()
-
-        standings['best_position_count'] = standings.groupby(['driver_name', 'season_year']).apply(
-            lambda group: group.assign(best_position_count=group.apply(
-                lambda row: (group.loc[:row.name, 'position'] == row.season_best_position).sum(), axis=1))
-        ).reset_index(drop=True)['best_position_count']
-
-        standings = standings.sort_values(['position', 'season_best_position', 'best_position_count'], ascending=True)
-        # standings = standings.sort_values('position', ascending=True)
+        standings = standings.sort_values('position', ascending=True)
         standings['open_group'] = 'I-II'
         standings.loc[standings['position'] > 16, 'open_group'] = 'III'
         standings.loc[standings['position'] > 28, 'open_group'] = 'IV'
@@ -75,8 +67,6 @@ class DataProcessor:
         standings.loc[standings['position'] > 10, 'star_group'] = 'II'
         standings.loc[standings['position'] > 20, 'star_group'] = 'III'
         standings.loc[standings['position'] > 30, 'star_group'] = 'IV'
-
-        print(standings[standings['star_group'] == 'II'][['driver_name', 'open_group', 'star_group', 'position']])
         return standings[['driver_name', 'open_group', 'star_group']]
     
 if __name__ == "__main__":

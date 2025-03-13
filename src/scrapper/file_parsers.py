@@ -237,7 +237,7 @@ class NascarResultsParser:
                    'fastest_lap': fastest_lap,
                    'top_15_laps': top_15_laps,
                    'pct_top_15_laps': pct_top_15_laps,
-                   'laps_led': laps_led,
+                #    'laps_led': laps_led,
                    'pct_laps_led': pct_laps_led,
                    'total_laps': total_laps,
                    'driver_rating': driver_rating,

@@ -6,6 +6,7 @@ import trackSimilarity from "./data/track_similarity.json";
 import RaceResultsTable from "./components/RaceResultsTable";
 import QualResultsTable from "./components/QualResultsTable";
 import FantasyPointsTable from "./components/FantasyPointsTable";
+import RatingTable from "./components/RatingTable";
 import OverviewTable from "./components/OverviewTable";
 import DriverPerformanceChart from "./components/DriverPerformanceChart";
 
@@ -21,6 +22,7 @@ const App = () => {
   const [raceDates, setRaceDates] = useState([]);
   const [similarRaceDates, setSimilarRaceDates] = useState([]);
   const [allRaceDates, setAllRaceDates] = useState([]);
+  const [currentSeasonDates, setCurrentSeasonDates] = useState([]);
   const [selectedTab, setSelectedTab] = useState(0);
 
   useEffect(() => {
@@ -56,6 +58,11 @@ const App = () => {
         .filter((entry) => entry.season_year >= 2021)
         .map((entry) => ({ season: entry.season_year, race_date: entry.race_date }));
       setAllRaceDates([...new Set(allRaces.map((race) => race.race_date))]);
+
+      const allSeasonRaces = raceData
+        .filter((entry) => entry.season_year === 2025)
+        .map((entry) => ({race_date: entry.race_date}));
+      setCurrentSeasonDates([...new Set(allSeasonRaces.map((race) => race.race_date))]);
 
       const groupDrivers = [...new Set(
         raceData
@@ -103,10 +110,10 @@ const App = () => {
       {selectedGroup && drivers.length > 0 && raceDates.length > 0 && (
         <>
           {selectedTab === 0 && <OverviewTable group={selectedGroup} drivers={drivers} raceDates={raceDates} track={nextRaceTrack} useStar={useStarGroup}/>}
-          {selectedTab === 1 && <RaceResultsTable group={selectedGroup} drivers={drivers} raceDates={raceDates} similarRaceDates={similarRaceDates} allRaceDates={allRaceDates} track={nextRaceTrack} useStar={useStarGroup}/>}
-          {selectedTab === 2 && <QualResultsTable group={selectedGroup} drivers={drivers} raceDates={raceDates} similarRaceDates={similarRaceDates} allRaceDates={allRaceDates} track={nextRaceTrack} useStar={useStarGroup}/>}
-          {selectedTab === 3 && <FantasyPointsTable group={selectedGroup} drivers={drivers} raceDates={raceDates} similarRaceDates={similarRaceDates} allRaceDates={allRaceDates} track={nextRaceTrack} useStar={useStarGroup}/>}
-          {selectedTab === 4 && <p>Driver Rating Table (To be implemented)</p>}
+          {selectedTab === 1 && <RaceResultsTable group={selectedGroup} drivers={drivers} raceDates={raceDates} similarRaceDates={similarRaceDates} allRaceDates={allRaceDates} currentSeasonDates={currentSeasonDates} track={nextRaceTrack} useStar={useStarGroup}/>}
+          {selectedTab === 2 && <QualResultsTable group={selectedGroup} drivers={drivers} raceDates={raceDates} similarRaceDates={similarRaceDates} allRaceDates={allRaceDates} currentSeasonDates={currentSeasonDates} track={nextRaceTrack} useStar={useStarGroup}/>}
+          {selectedTab === 3 && <FantasyPointsTable group={selectedGroup} drivers={drivers} raceDates={raceDates} similarRaceDates={similarRaceDates} allRaceDates={allRaceDates} currentSeasonDates={currentSeasonDates} track={nextRaceTrack} useStar={useStarGroup}/>}
+          {selectedTab === 4 && <RatingTable group={selectedGroup} drivers={drivers} raceDates={raceDates} similarRaceDates={similarRaceDates} allRaceDates={allRaceDates} currentSeasonDates={currentSeasonDates} track={nextRaceTrack} useStar={useStarGroup}/>}
           {selectedTab === 5 && <DriverPerformanceChart raceData={raceData} drivers={drivers} />}
         </>
       )}
