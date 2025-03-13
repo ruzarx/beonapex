@@ -5,6 +5,7 @@ import { getAverageFeatureValue, getAverageFantasyPoints } from "../utils/raceUt
 
 const OverviewTable = ({ group, drivers, raceDates, track, useStar }) => {
   const [excludePlayoffs, setExcludePlayoffs] = useState(false);
+  const [excludeDnf, setExcludeDnf] = useState(false);
 
   return (
     <TableContainer component={Paper} sx={{ maxHeight: 700, overflow: "auto" }}>
@@ -12,6 +13,11 @@ const OverviewTable = ({ group, drivers, raceDates, track, useStar }) => {
       <FormControlLabel
         control={<Checkbox checked={excludePlayoffs} onChange={() => setExcludePlayoffs(!excludePlayoffs)} />}
         label="Exclude Playoff Races"
+      />
+
+      <FormControlLabel
+        control={<Checkbox checked={excludeDnf} onChange={() => setExcludeDnf(!excludeDnf)} />}
+        label="Exclude DNFs"
       />
 
       <Table>
@@ -29,16 +35,16 @@ const OverviewTable = ({ group, drivers, raceDates, track, useStar }) => {
             <TableRow key={index}>
               <TableCell sx={{ width: "120px" }}>{driver}</TableCell>
               <TableCell sx={{ width: "80px", textAlign: "center" }}>
-                {getAverageFeatureValue(raceData, driver, group, raceDates, excludePlayoffs, useStar, "race_pos")}
+                {getAverageFeatureValue(raceData, driver, group, raceDates, excludePlayoffs, excludeDnf, useStar, "race_pos")}
               </TableCell>
               <TableCell sx={{ width: "80px", textAlign: "center" }}>
-                {getAverageFeatureValue(raceData, driver, group, raceDates, excludePlayoffs, useStar, "quali_pos")}
+                {getAverageFeatureValue(raceData, driver, group, raceDates, excludePlayoffs, excludeDnf, useStar, "quali_pos")}
               </TableCell>
               <TableCell sx={{ width: "80px", textAlign: "center" }}>
-                {getAverageFantasyPoints(raceData, driver, group, raceDates, excludePlayoffs, useStar)}
+                {getAverageFantasyPoints(raceData, driver, group, raceDates, excludePlayoffs, excludeDnf, useStar)}
               </TableCell>
               <TableCell sx={{ width: "80px", textAlign: "center" }}>
-                {getAverageFeatureValue(raceData, driver, group, raceDates, excludePlayoffs, useStar, "driver_rating")}
+                {getAverageFeatureValue(raceData, driver, group, raceDates, excludePlayoffs, excludeDnf, useStar, "driver_rating")}
               </TableCell>
             </TableRow>
           ))}

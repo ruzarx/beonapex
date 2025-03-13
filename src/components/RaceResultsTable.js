@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody, Checkbox, FormControlLabel } from "@mui/material";
+import { TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody, Checkbox, FormControlLabel, Box, Typography } from "@mui/material";
 import raceData from "../data/data.json"; 
 import { getAverageFeatureValue, getFeatureValue, getSeasonLabel } from "../utils/raceUtils";
 
 const RaceResultsTable = ({ group, drivers, raceDates, similarRaceDates, allRaceDates, currentSeasonDates, track, useStar }) => {
   const [excludePlayoffs, setExcludePlayoffs] = useState(false);
+  const [excludeDnf, setExcludeDnf] = useState(false);
 
   return (
     <TableContainer component={Paper} sx={{ maxHeight: 700, overflow: "auto" }}>
@@ -13,6 +14,16 @@ const RaceResultsTable = ({ group, drivers, raceDates, similarRaceDates, allRace
         control={<Checkbox checked={excludePlayoffs} onChange={() => setExcludePlayoffs(!excludePlayoffs)} />}
         label="Exclude Playoff Races"
       />
+
+      <FormControlLabel
+        control={<Checkbox checked={excludeDnf} onChange={() => setExcludeDnf(!excludeDnf)} />}
+        label="Exclude DNFs"
+      />
+
+      <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+        <Box sx={{ width: 20, height: 20, backgroundColor: "rgba(255, 0, 0, 0.2)", border: "1px solid red", mr: 1 }} />
+        <Typography variant="body2">Did Not Finish (DNF)</Typography>
+      </Box>
 
       <Table>
         <TableHead>
@@ -34,22 +45,33 @@ const RaceResultsTable = ({ group, drivers, raceDates, similarRaceDates, allRace
             <TableRow key={index}>
               <TableCell sx={{ width: "120px" }}>{driver}</TableCell>
               <TableCell sx={{ width: "80px", textAlign: "center" }}>
-                {getAverageFeatureValue(raceData, driver, group, raceDates, excludePlayoffs, useStar, "race_pos")}
+                {getAverageFeatureValue(raceData, driver, group, raceDates, excludePlayoffs, excludeDnf, useStar, "race_pos")}
               </TableCell>
               <TableCell sx={{ width: "80px", textAlign: "center" }}>
-                {getAverageFeatureValue(raceData, driver, group, similarRaceDates, excludePlayoffs, useStar, "race_pos")}
+                {getAverageFeatureValue(raceData, driver, group, similarRaceDates, excludePlayoffs, excludeDnf, useStar, "race_pos")}
               </TableCell>
               <TableCell sx={{ width: "80px", textAlign: "center" }}>
-                {getAverageFeatureValue(raceData, driver, group, allRaceDates, excludePlayoffs, useStar, "race_pos")}
+                {getAverageFeatureValue(raceData, driver, group, allRaceDates, excludePlayoffs, excludeDnf, useStar, "race_pos")}
               </TableCell>
               <TableCell sx={{ width: "80px", textAlign: "center" }}>
-                {getAverageFeatureValue(raceData, driver, group, currentSeasonDates, excludePlayoffs, useStar, "race_pos")}
+                {getAverageFeatureValue(raceData, driver, group, currentSeasonDates, excludePlayoffs, excludeDnf,useStar, "race_pos")}
               </TableCell>
-              {raceDates.map((race, idx) => (
-                <TableCell key={idx} sx={{ width: "80px", textAlign: "center" }}>
-                  {getFeatureValue(raceData, driver, race, group, track, excludePlayoffs, useStar, "race_pos")}
-                </TableCell>
-              ))}
+                {raceDates.map((race, idx) => {
+                  const { value, status } = getFeatureValue(raceData, driver, race, group, track, excludePlayoffs, excludeDnf, useStar, "race_pos");
+
+                  return (
+                    <TableCell
+                      key={idx}
+                      sx={{
+                        width: "80px",
+                        textAlign: "center",
+                        backgroundColor: status !== "finished" ? "rgba(255, 0, 0, 0.2)" : "inherit",
+                      }}
+                    >
+                      {value}
+                    </TableCell>
+                  );
+                })}
             </TableRow>
           ))}
         </TableBody>

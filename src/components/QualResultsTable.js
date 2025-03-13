@@ -5,6 +5,7 @@ import { getAverageFeatureValue, getFeatureValue, getSeasonLabel } from "../util
 
 const QualResultsTable = ({ group, drivers, raceDates, similarRaceDates, allRaceDates, currentSeasonDates, track, useStar }) => {
   const [excludePlayoffs, setExcludePlayoffs] = useState(false);
+  const [excludeDnf, setExcludeDnf] = useState(false);
 
   return (
     <TableContainer component={Paper} sx={{ maxHeight: 700, overflow: "auto" }}>
@@ -12,6 +13,11 @@ const QualResultsTable = ({ group, drivers, raceDates, similarRaceDates, allRace
       <FormControlLabel
         control={<Checkbox checked={excludePlayoffs} onChange={() => setExcludePlayoffs(!excludePlayoffs)} />}
         label="Exclude Playoff Races"
+      />
+
+      <FormControlLabel
+        control={<Checkbox checked={excludeDnf} onChange={() => setExcludeDnf(!excludeDnf)} />}
+        label="Exclude DNFs"
       />
 
       <Table>
@@ -34,22 +40,33 @@ const QualResultsTable = ({ group, drivers, raceDates, similarRaceDates, allRace
             <TableRow key={index}>
               <TableCell sx={{ width: "120px" }}>{driver}</TableCell>
               <TableCell sx={{ width: "80px", textAlign: "center" }}>
-                {getAverageFeatureValue(raceData, driver, group, raceDates, excludePlayoffs, useStar, "quali_pos")}
+                {getAverageFeatureValue(raceData, driver, group, raceDates, excludePlayoffs, false, useStar, "quali_pos")}
               </TableCell>
               <TableCell sx={{ width: "80px", textAlign: "center" }}>
-                {getAverageFeatureValue(raceData, driver, group, similarRaceDates, excludePlayoffs, useStar, "quali_pos")}
+                {getAverageFeatureValue(raceData, driver, group, similarRaceDates, excludePlayoffs, false, useStar, "quali_pos")}
               </TableCell>
               <TableCell sx={{ width: "80px", textAlign: "center" }}>
-                {getAverageFeatureValue(raceData, driver, group, allRaceDates, excludePlayoffs, useStar, "quali_pos")}
+                {getAverageFeatureValue(raceData, driver, group, allRaceDates, excludePlayoffs, false, useStar, "quali_pos")}
               </TableCell>
               <TableCell sx={{ width: "80px", textAlign: "center" }}>
-                {getAverageFeatureValue(raceData, driver, group, currentSeasonDates, excludePlayoffs, useStar, "quali_pos")}
+                {getAverageFeatureValue(raceData, driver, group, currentSeasonDates, excludePlayoffs, false, useStar, "quali_pos")}
               </TableCell>
-              {raceDates.map((race, idx) => (
-                <TableCell key={idx} sx={{ width: "80px", textAlign: "center" }}>
-                  {getFeatureValue(raceData, driver, race, group, track, excludePlayoffs, useStar, "quali_pos")}
-                </TableCell>
-              ))}
+                  {raceDates.map((race, idx) => {
+                    const { value, status } = getFeatureValue(raceData, driver, race, group, track, excludePlayoffs, false, useStar, "quali_pos");
+  
+                    return (
+                      <TableCell
+                        key={idx}
+                        sx={{
+                          width: "80px",
+                          textAlign: "center",
+                          // backgroundColor: status !== "finished" ? "rgba(255, 0, 0, 0.2)" : "inherit",
+                        }}
+                      >
+                        {value}
+                      </TableCell>
+                    );
+                  })}
             </TableRow>
           ))}
         </TableBody>

@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody, Checkbox, FormControlLabel } from "@mui/material";
+import { TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody, Checkbox, FormControlLabel, Box, Typography } from "@mui/material";
 import raceData from "../data/data.json"; 
 import { getAverageFantasyPoints, getFantasyPoints, getSeasonLabel } from "../utils/raceUtils";
 
 const FantasyPointsTable = ({ group, drivers, raceDates, similarRaceDates, allRaceDates, currentSeasonDates, track, useStar }) => {
   const [excludePlayoffs, setExcludePlayoffs] = useState(false);
+  const [excludeDnf, setExcludeDnf] = useState(false);
 
   return (
     <TableContainer component={Paper} sx={{ maxHeight: 700, overflow: "auto" }}>
@@ -13,6 +14,16 @@ const FantasyPointsTable = ({ group, drivers, raceDates, similarRaceDates, allRa
         control={<Checkbox checked={excludePlayoffs} onChange={() => setExcludePlayoffs(!excludePlayoffs)} />}
         label="Exclude Playoff Races"
       />
+
+      <FormControlLabel
+        control={<Checkbox checked={excludeDnf} onChange={() => setExcludeDnf(!excludeDnf)} />}
+        label="Exclude DNFs"
+      />
+
+      <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+        <Box sx={{ width: 20, height: 20, backgroundColor: "rgba(255, 0, 0, 0.2)", border: "1px solid red", mr: 1 }} />
+        <Typography variant="body2">Did Not Finish (DNF)</Typography>
+      </Box>
 
       <Table>
         <TableHead>
@@ -34,22 +45,33 @@ const FantasyPointsTable = ({ group, drivers, raceDates, similarRaceDates, allRa
             <TableRow key={index}>
               <TableCell sx={{ width: "120px" }}>{driver}</TableCell>
               <TableCell sx={{ width: "80px", textAlign: "center" }}>
-                {getAverageFantasyPoints(raceData, driver, group, raceDates, excludePlayoffs, useStar)}
+                {getAverageFantasyPoints(raceData, driver, group, raceDates, excludePlayoffs, excludeDnf, useStar)}
               </TableCell>
               <TableCell sx={{ width: "80px", textAlign: "center" }}>
-                {getAverageFantasyPoints(raceData, driver, group, similarRaceDates, excludePlayoffs, useStar)}
+                {getAverageFantasyPoints(raceData, driver, group, similarRaceDates, excludePlayoffs, excludeDnf, useStar)}
               </TableCell>
               <TableCell sx={{ width: "80px", textAlign: "center" }}>
-                {getAverageFantasyPoints(raceData, driver, group, allRaceDates, excludePlayoffs, useStar)}
+                {getAverageFantasyPoints(raceData, driver, group, allRaceDates, excludePlayoffs, excludeDnf, useStar)}
               </TableCell>
               <TableCell sx={{ width: "80px", textAlign: "center" }}>
-                {getAverageFantasyPoints(raceData, driver, group, currentSeasonDates, excludePlayoffs, useStar)}
+                {getAverageFantasyPoints(raceData, driver, group, currentSeasonDates, excludePlayoffs, excludeDnf, useStar)}
               </TableCell>
-              {raceDates.map((race, idx) => (
-                <TableCell key={idx} sx={{ width: "80px", textAlign: "center" }}>
-                  {getFantasyPoints(raceData, driver, race, group, track, excludePlayoffs, useStar)}
-                </TableCell>
-              ))}
+              {raceDates.map((race, idx) => {
+                    const { value, status } = getFantasyPoints(raceData, driver, race, group, track, excludePlayoffs, excludeDnf, useStar);
+  
+                    return (
+                      <TableCell
+                        key={idx}
+                        sx={{
+                          width: "80px",
+                          textAlign: "center",
+                          backgroundColor: status !== "finished" ? "rgba(255, 0, 0, 0.2)" : "inherit",
+                        }}
+                      >
+                        {value}
+                      </TableCell>
+                    );
+                  })}
             </TableRow>
           ))}
         </TableBody>
