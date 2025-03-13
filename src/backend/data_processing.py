@@ -238,6 +238,8 @@ def compose_season_standings_data(raw_data: list[dict], race_number: str, curren
             'race_finish_points': race_finish_points,
             'race_season_points': race_season_points,
             'race_playoff_points': wins * 5 + stage_wins,
+            'season_year': current_season,
+            'race_number': race_number,
             }
         results.append(current_data)
     return results

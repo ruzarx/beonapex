@@ -9,7 +9,6 @@ from process_data import FeatureProcessor
 class DataProcessor:
     def update_data(self):
         df, (next_race_data, last_race_data) = self.get_stats()
-        print(df)
         with open('data/next_race_data.json', 'w') as file:
             json.dump(next_race_data, file)
         with open('../data/next_race_data.json', 'w') as file:
@@ -19,7 +18,7 @@ class DataProcessor:
         standings = pd.DataFrame(self.get_standings(
             last_race_data['last_race_season'],
             last_race_data['last_race_number']
-        ))[['driver_name', 'position', 'race_season_points', 'race_playoff_points']]
+        ))[['driver_name', 'position', 'race_season_points', 'race_playoff_points', 'race_number', 'season_year']]
         standings.to_json('../data/standings.json', orient='records')
         groups = self.make_fantasy_groups(standings)
         df = df.merge(groups, on='driver_name')
@@ -57,7 +56,17 @@ class DataProcessor:
         return season_standings_data
     
     def make_fantasy_groups(self, standings: pd.DataFrame) -> pd.DataFrame:
-        standings = standings.sort_values('position', ascending=True)
+        print(standings['race_number'].unique())
+        standings = standings.sort_values(['driver_name', 'season_year', 'race_number'])
+        standings['season_best_position'] = standings.groupby(['driver_name', 'season_year'])['position'].cummin()
+
+        standings['best_position_count'] = standings.groupby(['driver_name', 'season_year']).apply(
+            lambda group: group.assign(best_position_count=group.apply(
+                lambda row: (group.loc[:row.name, 'position'] == row.season_best_position).sum(), axis=1))
+        ).reset_index(drop=True)['best_position_count']
+
+        standings = standings.sort_values(['position', 'season_best_position', 'best_position_count'], ascending=True)
+        # standings = standings.sort_values('position', ascending=True)
         standings['open_group'] = 'I-II'
         standings.loc[standings['position'] > 16, 'open_group'] = 'III'
         standings.loc[standings['position'] > 28, 'open_group'] = 'IV'
@@ -66,6 +75,8 @@ class DataProcessor:
         standings.loc[standings['position'] > 10, 'star_group'] = 'II'
         standings.loc[standings['position'] > 20, 'star_group'] = 'III'
         standings.loc[standings['position'] > 30, 'star_group'] = 'IV'
+
+        print(standings[standings['star_group'] == 'II'][['driver_name', 'open_group', 'star_group', 'position']])
         return standings[['driver_name', 'open_group', 'star_group']]
     
 if __name__ == "__main__":
