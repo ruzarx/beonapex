@@ -16,12 +16,16 @@ import {
 import raceData from "./data/data.json";
 import nextRaceData from "./data/next_race_data.json";
 import trackSimilarity from "./data/track_similarity.json";
-import RaceResultsTable from "./components/RaceResultsTable";
-import QualResultsTable from "./components/QualResultsTable";
-import FantasyPointsTable from "./components/FantasyPointsTable";
-import RatingTable from "./components/RatingTable";
-import OverviewTable from "./components/OverviewTable";
-import DriverPerformanceChart from "./components/DriverPerformanceChart";
+import RaceResultsTable from "./components/driver_tables/RaceResultsTable";
+import QualResultsTable from "./components/driver_tables/QualResultsTable";
+import FantasyPointsTable from "./components/driver_tables/FantasyPointsTable";
+import RatingTable from "./components/driver_tables/RatingTable";
+import OverviewTable from "./components/driver_tables/OverviewTable";
+import DriverPerformanceChart from "./components/driver_tables/DriverPerformanceChart";
+import TeamRaceResultsTable from "./components/team_tables/TeamRaceResultsTable";
+import TeamQualResultsTable from "./components/team_tables/TeamQualResultsTable";
+import TeamFantasyPointsTable from "./components/team_tables/TeamFantasyPointsTable";
+import TeamRatingTable from "./components/team_tables/TeamRatingTable";
 
 const nextRaceTrack = nextRaceData["next_race_track"];
 const groupsOrder = ["I", "I-II", "II", "III", "IV"];
@@ -31,6 +35,7 @@ const App = () => {
   const [selectedGroup, setSelectedGroup] = useState("I-II");
   const [groups, setGroups] = useState(["I-II", "III", "IV"]);
   const [drivers, setDrivers] = useState([]);
+  const [teams, setTeams] = useState([]);
   const [raceDates, setRaceDates] = useState([]);
   const [similarRaceDates, setSimilarRaceDates] = useState([]);
   const [allRaceDates, setAllRaceDates] = useState([]);
@@ -107,12 +112,22 @@ const App = () => {
         ),
       ];
       setDrivers(groupDrivers);
+
+      const groupTeams = [
+        ...new Set(
+          raceData
+            .filter((entry) => (entry.season_year === 2025) && (entry.team_name !== 'unknown'))
+            .map((entry) => entry.team_name)
+        ),
+      ];
+      setTeams(groupTeams);
     }
   }, [selectedGroup, useStarGroup]);
 
   return (
     <Container sx={{ textAlign: "center", mt: 4 }}>
-      <h1>BOE NASCAR Fantasy 69XL/R34 - {nextRaceTrack}</h1>
+      <h1>BOE NASCAR Fantasy 69XL/R34</h1>
+      <h2>{nextRaceTrack}</h2>
 
       <Box sx={{ mt: 6 }}>
         <FormControl component="fieldset" sx={{ mb: 2 }}>
@@ -162,6 +177,7 @@ const App = () => {
           >
             <Tab label="Overview" />
             <Tab label="Driver Stats" />
+            <Tab label="Team Stats" />
             <Tab label="Driver Performance" />
           </Tabs>
         </Box>
@@ -185,7 +201,24 @@ const App = () => {
         </Box>
       )}
 
-      {/* 🔹 Render the Correct Table Based on Selected Tab */}
+      {selectedTab === 2 && (
+        <Box sx={{ display: "flex", justifyContent: "center", mb: 3 }}>
+          <ToggleButtonGroup
+            value={selectedTable}
+            exclusive
+            onChange={(event, newType) =>
+              newType !== null && setSelectedTable(newType)
+            }
+            aria-label="table type"
+          >
+            <ToggleButton value="finish">Finish Position</ToggleButton>
+            <ToggleButton value="start">Qualification Position</ToggleButton>
+            <ToggleButton value="points">Fantasy Points</ToggleButton>
+            <ToggleButton value="rating">Rating</ToggleButton>
+          </ToggleButtonGroup>
+        </Box>
+      )}
+
       {selectedGroup && drivers.length > 0 && raceDates.length > 0 && (
         <>
           {selectedTab === 0 && (
@@ -234,7 +267,49 @@ const App = () => {
                 )}
               </>
             )}
-          {selectedTab === 2 && (
+          {selectedTab === 2 &&
+            teams.length > 0 &&
+            raceDates.length > 0 && (
+              <>
+                {selectedTable === "finish" && (
+                  <TeamRaceResultsTable
+                    teams={teams}
+                    raceDates={raceDates}
+                    similarRaceDates={similarRaceDates}
+                    allRaceDates={allRaceDates}
+                    currentSeasonDates={currentSeasonDates}
+                  />
+                )}
+                {selectedTable === "start" && (
+                  <TeamQualResultsTable
+                    teams={teams}
+                    raceDates={raceDates}
+                    similarRaceDates={similarRaceDates}
+                    allRaceDates={allRaceDates}
+                    currentSeasonDates={currentSeasonDates}
+                  />
+                )}
+                {selectedTable === "points" && (
+                  <TeamFantasyPointsTable
+                    teams={teams}
+                    raceDates={raceDates}
+                    similarRaceDates={similarRaceDates}
+                    allRaceDates={allRaceDates}
+                    currentSeasonDates={currentSeasonDates}
+                  />
+                )}
+                {selectedTable === "rating" && (
+                  <TeamRatingTable
+                    teams={teams}
+                    raceDates={raceDates}
+                    similarRaceDates={similarRaceDates}
+                    allRaceDates={allRaceDates}
+                    currentSeasonDates={currentSeasonDates}
+                  />
+                )}
+              </>
+            )}
+          {selectedTab === 3 && (
             <DriverPerformanceChart raceData={raceData} drivers={drivers} />
           )}
         </>

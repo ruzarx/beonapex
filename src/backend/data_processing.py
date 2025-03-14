@@ -1,14 +1,11 @@
 import sys
 sys.path.append('.')
 
-from datetime import date, datetime
-from pathlib import Path
 from collections import defaultdict, OrderedDict
 
 import pandas as pd
 
 from owners_to_teams import owners_to_teams
-from tracks_to_types import tracks_to_types, tracks_to_short
 
 from standings_calculation import standings_calculation
 

@@ -37,13 +37,13 @@ for season in [2022, 2023, 2024, 2025]:
         # is_success = scrap_race(season, race_number)
         # if not is_success:
             # break
-        race_data, csv_race_data = NascarRaceDataParser(season, race_number).fill_race_data()
+        # race_data, csv_race_data = NascarRaceDataParser(season, race_number).fill_race_data()
         # writer.fill_race_data(race_data)
         race_results, standings, csv_res, csv_standings = NascarResultsParser(season, race_number).fill_results_data()
         make_csv_from_res(csv_res, season, race_number, 'race_results')
-        make_csv_from_res(csv_standings, season, race_number, 'standings')
-        make_csv_from_res(csv_race_data, season, race_number, 'race_data')
-        loop_data = NascarResultsParser(season, race_number).fill_loop_data()
-        make_csv_from_res(loop_data, season, race_number, 'loop_data')
+        # make_csv_from_res(csv_standings, season, race_number, 'standings')
+        # make_csv_from_res(csv_race_data, season, race_number, 'race_data')
+        # loop_data = NascarResultsParser(season, race_number).fill_loop_data()
+        # make_csv_from_res(loop_data, season, race_number, 'loop_data')
         # writer.fill_race_results(race_results)
         # writer.fill_standings(standings)

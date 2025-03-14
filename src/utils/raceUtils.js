@@ -9,6 +9,16 @@ export const filterDriverRaces = (raceData, driver, raceDates, excludePlayoffs, 
     );
   };
 
+  export const filterTeamRaces = (raceData, team, raceDates, excludePlayoffs, excludeDnf) => {
+    return raceData.filter(
+      (entry) =>
+        entry.team_name === team &&
+        (Array.isArray(raceDates) ? raceDates.includes(entry.race_date) : entry.race_date === raceDates) &&
+        (!excludePlayoffs || entry.season_stage === "season") &&
+        (!excludeDnf || entry.status === 'finished')
+    );
+  };
+
   // 📌 Utility function to calculate average finish position
   export const getAverageFeatureValue = (raceData, driver, raceDates, excludePlayoffs, excludeDnf, feature) => {
     const driverRaces = filterDriverRaces(raceData, driver, raceDates, excludePlayoffs, excludeDnf);
@@ -28,6 +38,20 @@ export const filterDriverRaces = (raceData, driver, raceDates, excludePlayoffs, 
     );
     if (!raceEntry) return { value: "-", status: 'finished' };
     return { value: raceEntry[feature], status: raceEntry.status };
+  };
+
+  export const getTeamFeatureValue = (raceData, team, raceDate, excludePlayoffs, excludeDnf, feature) => {
+    const teamRaces = filterTeamRaces(raceData, team, raceDate, excludePlayoffs, excludeDnf);
+    if (teamRaces.length === 0) return "-";
+    const totalFeatureValue = teamRaces.reduce((sum, race) => sum + race[feature], 0);
+    return (totalFeatureValue / teamRaces.length).toFixed(2);
+  };
+
+  export const getTeamFantasyPoints = (raceData, team, raceDate, excludePlayoffs, excludeDnf, feature) => {
+    const teamRaces = filterTeamRaces(raceData, team, raceDate, excludePlayoffs, excludeDnf);
+    if (teamRaces.length === 0) return "-";
+    const totalFeatureValue = teamRaces.reduce((sum, race) => sum + race.finish_position_points + race.stage_points, 0);
+    return (totalFeatureValue / teamRaces.length).toFixed(2);
   };
 
   export const getFantasyPoints = (raceData, driver, raceDate, excludePlayoffs, excludeDnf) => {

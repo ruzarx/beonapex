@@ -4,6 +4,7 @@ import json
 
 import data_processing
 from process_data import FeatureProcessor
+from entry_list import drivers_2025
 
 
 class DataProcessor:
@@ -16,12 +17,12 @@ class DataProcessor:
         with open('data/last_race_data.json', 'w') as file:
             json.dump(last_race_data, file)
         standings = pd.DataFrame(self.get_standings(
-            last_race_data['last_race_season'],
-            last_race_data['last_race_number']
-        ))[['driver_name', 'position', 'race_season_points', 'race_playoff_points', 'race_number', 'season_year']]
+                last_race_data['last_race_season'],
+                last_race_data['last_race_number']
+            ))[['driver_name', 'position', 'race_season_points', 'race_playoff_points', 'race_number', 'season_year']]
         standings.to_json('../data/standings.json', orient='records')
         groups = self.make_fantasy_groups(standings)
-        df = df.merge(groups, on='driver_name')
+        df = df.merge(groups, on='driver_name', how='left')
         df.to_json('../data/data.json', orient='records')
         return
 
@@ -58,6 +59,7 @@ class DataProcessor:
         return season_standings_data
     
     def make_fantasy_groups(self, standings: pd.DataFrame) -> pd.DataFrame:
+        standings = standings[standings['driver_name'].isin(drivers_2025)].reset_index(drop=True)
         standings = standings.sort_values('position', ascending=True)
         standings['open_group'] = 'I-II'
         standings.loc[standings['position'] > 16, 'open_group'] = 'III'

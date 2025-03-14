@@ -19,7 +19,8 @@ owners_to_teams = {
     'TMT Racing': '23XI Racing',
     'Carl Long': 'Power Source',
     'Johnathan Cohen': 'NY Racing Team',
-    
+    'HYAK Motorsports': 'HYAK Motorsports',
+    'Gene Haas': 'Haas Factory Team',
 }
 
 

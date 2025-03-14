@@ -1,8 +1,6 @@
 import pandas as pd
 from datetime import datetime
 
-from entry_list import drivers_2025
-
 seasons = [2022, 2023, 2024, 2025]
 
 
@@ -34,7 +32,6 @@ class FeatureProcessor:
         df = df.merge(calendar[['season_year', 'race_number', 'season_stage']], on=['season_year', 'race_number'])
         loop_data = pd.read_csv('data/loop_data.csv')
         df = df.merge(loop_data, on=['season_year', 'race_number', 'driver_name'], how='left')
-        df = df[df['driver_name'].isin(drivers_2025)].reset_index(drop=True)
         df = df[df['season_year'].isin(seasons)].reset_index(drop=True)
         self._get_next_race(calendar)
         return df
@@ -63,7 +60,6 @@ class FeatureProcessor:
     def process_features(self, df: pd.DataFrame) -> pd.DataFrame:
         df = self.process_status(df)
         df = self.process_rare_tracks(df)
-        # df = self.fill_stage_nan(df)
         df = self.stage_pos_to_points(df)
         return df
 
