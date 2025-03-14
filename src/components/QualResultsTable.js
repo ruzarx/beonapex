@@ -3,7 +3,7 @@ import { TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody
 import raceData from "../data/data.json"; 
 import { getAverageFeatureValue, getFeatureValue, getSeasonLabel } from "../utils/raceUtils";
 
-const QualResultsTable = ({ group, drivers, raceDates, similarRaceDates, allRaceDates, currentSeasonDates, track, useStar }) => {
+const QualResultsTable = ({ drivers, raceDates, similarRaceDates, allRaceDates, currentSeasonDates }) => {
   const [excludePlayoffs, setExcludePlayoffs] = useState(false);
   const [excludeDnf, setExcludeDnf] = useState(false);
 
@@ -24,10 +24,10 @@ const QualResultsTable = ({ group, drivers, raceDates, similarRaceDates, allRace
         <TableHead>
           <TableRow>
             <TableCell sx={{ width: "120px", fontWeight: "bold" }}>Driver</TableCell>
-            <TableCell sx={{ width: "80px", textAlign: "center" }}>Avg. Start Pos</TableCell>
-            <TableCell sx={{ width: "80px", textAlign: "center" }}>Avg. Similar Tracks Start</TableCell>
-            <TableCell sx={{ width: "80px", textAlign: "center" }}>Avg. All Tracks Start</TableCell>
-            <TableCell sx={{ width: "80px", textAlign: "center" }}>Avg. Current Season Start</TableCell>
+            <TableCell sx={{ width: "80px", textAlign: "center" }}>Avg. Qual</TableCell>
+            <TableCell sx={{ width: "80px", textAlign: "center" }}>Avg. Similar Tracks Qual</TableCell>
+            <TableCell sx={{ width: "80px", textAlign: "center" }}>Avg. All Tracks Qual</TableCell>
+            <TableCell sx={{ width: "80px", textAlign: "center" }}>Avg. Season Qual</TableCell>
             {raceDates.map((race, index) => (
               <TableCell key={index} sx={{ width: "80px", textAlign: "center" }}>
                 {getSeasonLabel(race)}
@@ -40,19 +40,19 @@ const QualResultsTable = ({ group, drivers, raceDates, similarRaceDates, allRace
             <TableRow key={index}>
               <TableCell sx={{ width: "120px" }}>{driver}</TableCell>
               <TableCell sx={{ width: "80px", textAlign: "center" }}>
-                {getAverageFeatureValue(raceData, driver, group, raceDates, excludePlayoffs, false, useStar, "quali_pos")}
+                {getAverageFeatureValue(raceData, driver, raceDates, excludePlayoffs, false, "quali_pos")}
               </TableCell>
               <TableCell sx={{ width: "80px", textAlign: "center" }}>
-                {getAverageFeatureValue(raceData, driver, group, similarRaceDates, excludePlayoffs, false, useStar, "quali_pos")}
+                {getAverageFeatureValue(raceData, driver, similarRaceDates, excludePlayoffs, false, "quali_pos")}
               </TableCell>
               <TableCell sx={{ width: "80px", textAlign: "center" }}>
-                {getAverageFeatureValue(raceData, driver, group, allRaceDates, excludePlayoffs, false, useStar, "quali_pos")}
+                {getAverageFeatureValue(raceData, driver, allRaceDates, excludePlayoffs, false, "quali_pos")}
               </TableCell>
               <TableCell sx={{ width: "80px", textAlign: "center" }}>
-                {getAverageFeatureValue(raceData, driver, group, currentSeasonDates, excludePlayoffs, false, useStar, "quali_pos")}
+                {getAverageFeatureValue(raceData, driver, currentSeasonDates, excludePlayoffs, false, "quali_pos")}
               </TableCell>
-                  {raceDates.map((race, idx) => {
-                    const { value, status } = getFeatureValue(raceData, driver, race, group, track, excludePlayoffs, false, useStar, "quali_pos");
+                  {raceDates.map((race_date, idx) => {
+                    const { value, status } = getFeatureValue(raceData, driver, race_date, excludePlayoffs, false, "quali_pos");
   
                     return (
                       <TableCell
@@ -60,7 +60,6 @@ const QualResultsTable = ({ group, drivers, raceDates, similarRaceDates, allRace
                         sx={{
                           width: "80px",
                           textAlign: "center",
-                          // backgroundColor: status !== "finished" ? "rgba(255, 0, 0, 0.2)" : "inherit",
                         }}
                       >
                         {value}

@@ -3,7 +3,7 @@ import { TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody
 import raceData from "../data/data.json"; 
 import { getAverageFantasyPoints, getFantasyPoints, getSeasonLabel } from "../utils/raceUtils";
 
-const FantasyPointsTable = ({ group, drivers, raceDates, similarRaceDates, allRaceDates, currentSeasonDates, track, useStar }) => {
+const FantasyPointsTable = ({ drivers, raceDates, similarRaceDates, allRaceDates, currentSeasonDates }) => {
   const [excludePlayoffs, setExcludePlayoffs] = useState(false);
   const [excludeDnf, setExcludeDnf] = useState(false);
 
@@ -32,7 +32,7 @@ const FantasyPointsTable = ({ group, drivers, raceDates, similarRaceDates, allRa
             <TableCell sx={{ width: "80px", textAlign: "center" }}>Avg. Fantasy Pts</TableCell>
             <TableCell sx={{ width: "80px", textAlign: "center" }}>Avg. Similar Tracks Fantasy Pts</TableCell>
             <TableCell sx={{ width: "80px", textAlign: "center" }}>Avg. All Tracks Fantasy Pts</TableCell>
-            <TableCell sx={{ width: "80px", textAlign: "center" }}>Avg. Current Season Fantasy Pts</TableCell>
+            <TableCell sx={{ width: "80px", textAlign: "center" }}>Avg. Season Fantasy Pts</TableCell>
             {raceDates.map((race, index) => (
               <TableCell key={index} sx={{ width: "80px", textAlign: "center" }}>
                 {getSeasonLabel(race)}
@@ -45,20 +45,19 @@ const FantasyPointsTable = ({ group, drivers, raceDates, similarRaceDates, allRa
             <TableRow key={index}>
               <TableCell sx={{ width: "120px" }}>{driver}</TableCell>
               <TableCell sx={{ width: "80px", textAlign: "center" }}>
-                {getAverageFantasyPoints(raceData, driver, group, raceDates, excludePlayoffs, excludeDnf, useStar)}
+                {getAverageFantasyPoints(raceData, driver, raceDates, excludePlayoffs, excludeDnf)}
               </TableCell>
               <TableCell sx={{ width: "80px", textAlign: "center" }}>
-                {getAverageFantasyPoints(raceData, driver, group, similarRaceDates, excludePlayoffs, excludeDnf, useStar)}
+                {getAverageFantasyPoints(raceData, driver, similarRaceDates, excludePlayoffs, excludeDnf)}
               </TableCell>
               <TableCell sx={{ width: "80px", textAlign: "center" }}>
-                {getAverageFantasyPoints(raceData, driver, group, allRaceDates, excludePlayoffs, excludeDnf, useStar)}
+                {getAverageFantasyPoints(raceData, driver, allRaceDates, excludePlayoffs, excludeDnf)}
               </TableCell>
               <TableCell sx={{ width: "80px", textAlign: "center" }}>
-                {getAverageFantasyPoints(raceData, driver, group, currentSeasonDates, excludePlayoffs, excludeDnf, useStar)}
+                {getAverageFantasyPoints(raceData, driver, currentSeasonDates, excludePlayoffs, excludeDnf)}
               </TableCell>
-              {raceDates.map((race, idx) => {
-                    const { value, status } = getFantasyPoints(raceData, driver, race, group, track, excludePlayoffs, excludeDnf, useStar);
-  
+              {raceDates.map((race_date, idx) => {
+                    const { value, status } = getFantasyPoints(raceData, driver, race_date, excludePlayoffs, excludeDnf);
                     return (
                       <TableCell
                         key={idx}

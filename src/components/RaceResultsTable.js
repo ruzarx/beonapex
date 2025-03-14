@@ -3,7 +3,7 @@ import { TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody
 import raceData from "../data/data.json"; 
 import { getAverageFeatureValue, getFeatureValue, getSeasonLabel } from "../utils/raceUtils";
 
-const RaceResultsTable = ({ group, drivers, raceDates, similarRaceDates, allRaceDates, currentSeasonDates, track, useStar }) => {
+const RaceResultsTable = ({ drivers, raceDates, similarRaceDates, allRaceDates, currentSeasonDates }) => {
   const [excludePlayoffs, setExcludePlayoffs] = useState(false);
   const [excludeDnf, setExcludeDnf] = useState(false);
 
@@ -32,7 +32,7 @@ const RaceResultsTable = ({ group, drivers, raceDates, similarRaceDates, allRace
             <TableCell sx={{ width: "80px", textAlign: "center" }}>Avg. Track Finish</TableCell>
             <TableCell sx={{ width: "80px", textAlign: "center" }}>Avg. Similar Tracks Finish</TableCell>
             <TableCell sx={{ width: "80px", textAlign: "center" }}>Avg. All Tracks Finish</TableCell>
-            <TableCell sx={{ width: "80px", textAlign: "center" }}>Avg. Current Season Finish</TableCell>
+            <TableCell sx={{ width: "80px", textAlign: "center" }}>Avg. Season Finish</TableCell>
             {raceDates.map((race, index) => (
               <TableCell key={index} sx={{ width: "80px", textAlign: "center" }}>
                 {getSeasonLabel(race)}
@@ -45,20 +45,19 @@ const RaceResultsTable = ({ group, drivers, raceDates, similarRaceDates, allRace
             <TableRow key={index}>
               <TableCell sx={{ width: "120px" }}>{driver}</TableCell>
               <TableCell sx={{ width: "80px", textAlign: "center" }}>
-                {getAverageFeatureValue(raceData, driver, group, raceDates, excludePlayoffs, excludeDnf, useStar, "race_pos")}
+                {getAverageFeatureValue(raceData, driver, raceDates, excludePlayoffs, excludeDnf, "race_pos")}
               </TableCell>
               <TableCell sx={{ width: "80px", textAlign: "center" }}>
-                {getAverageFeatureValue(raceData, driver, group, similarRaceDates, excludePlayoffs, excludeDnf, useStar, "race_pos")}
+                {getAverageFeatureValue(raceData, driver, similarRaceDates, excludePlayoffs, excludeDnf, "race_pos")}
               </TableCell>
               <TableCell sx={{ width: "80px", textAlign: "center" }}>
-                {getAverageFeatureValue(raceData, driver, group, allRaceDates, excludePlayoffs, excludeDnf, useStar, "race_pos")}
+                {getAverageFeatureValue(raceData, driver, allRaceDates, excludePlayoffs, excludeDnf, "race_pos")}
               </TableCell>
               <TableCell sx={{ width: "80px", textAlign: "center" }}>
-                {getAverageFeatureValue(raceData, driver, group, currentSeasonDates, excludePlayoffs, excludeDnf,useStar, "race_pos")}
+                {getAverageFeatureValue(raceData, driver, currentSeasonDates, excludePlayoffs, excludeDnf, "race_pos")}
               </TableCell>
-                {raceDates.map((race, idx) => {
-                  const { value, status } = getFeatureValue(raceData, driver, race, group, track, excludePlayoffs, excludeDnf, useStar, "race_pos");
-
+                {raceDates.map((race_date, idx) => {
+                  const { value, status } = getFeatureValue(raceData, driver, race_date, excludePlayoffs, excludeDnf, "race_pos");
                   return (
                     <TableCell
                       key={idx}

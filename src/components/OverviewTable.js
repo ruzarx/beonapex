@@ -3,7 +3,7 @@ import { TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody
 import raceData from "../data/data.json"; 
 import { getAverageFeatureValue, getAverageFantasyPoints } from "../utils/raceUtils";
 
-const OverviewTable = ({ group, drivers, raceDates, track, useStar }) => {
+const OverviewTable = ({ drivers, raceDates }) => {
   const [excludePlayoffs, setExcludePlayoffs] = useState(false);
   const [excludeDnf, setExcludeDnf] = useState(false);
 
@@ -35,16 +35,16 @@ const OverviewTable = ({ group, drivers, raceDates, track, useStar }) => {
             <TableRow key={index}>
               <TableCell sx={{ width: "120px" }}>{driver}</TableCell>
               <TableCell sx={{ width: "80px", textAlign: "center" }}>
-                {getAverageFeatureValue(raceData, driver, group, raceDates, excludePlayoffs, excludeDnf, useStar, "race_pos")}
+                {getAverageFeatureValue(raceData, driver, raceDates, excludePlayoffs, excludeDnf, "race_pos")}
               </TableCell>
               <TableCell sx={{ width: "80px", textAlign: "center" }}>
-                {getAverageFeatureValue(raceData, driver, group, raceDates, excludePlayoffs, excludeDnf, useStar, "quali_pos")}
+                {getAverageFeatureValue(raceData, driver, raceDates, excludePlayoffs, excludeDnf, "quali_pos")}
               </TableCell>
               <TableCell sx={{ width: "80px", textAlign: "center" }}>
-                {getAverageFantasyPoints(raceData, driver, group, raceDates, excludePlayoffs, excludeDnf, useStar)}
+                {getAverageFantasyPoints(raceData, driver, raceDates, excludePlayoffs, excludeDnf)}
               </TableCell>
               <TableCell sx={{ width: "80px", textAlign: "center" }}>
-                {getAverageFeatureValue(raceData, driver, group, raceDates, excludePlayoffs, excludeDnf, useStar, "driver_rating")}
+                {getAverageFeatureValue(raceData, driver, raceDates, excludePlayoffs, excludeDnf, "driver_rating")}
               </TableCell>
             </TableRow>
           ))}
