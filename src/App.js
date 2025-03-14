@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Container, Select, MenuItem, FormControlLabel, Switch, Tabs, Tab, Box } from "@mui/material";
+import { Container, Select, MenuItem, FormControlLabel, Switch, Tabs, Tab, Box, FormControl, Radio, RadioGroup, FormLabel } from "@mui/material";
 import raceData from "./data/data.json";
 import nextRaceData from "./data/next_race_data.json";
 import trackSimilarity from "./data/track_similarity.json";
@@ -74,23 +74,29 @@ const App = () => {
   }, [selectedGroup, useStarGroup]);
 
   return (
-    <Container sx={{ textAlign: "center", mt: 4 }}>
+    <Container sx={{ textAlign: "center", mt: 4}}>
       <h1>BOE NASCAR Fantasy 69XL/R34 - {nextRaceTrack}</h1>
 
-      {/* 🔹 Toggle between Open and Star groups */}
-      <FormControlLabel
-        control={<Switch checked={useStarGroup} onChange={() => setUseStarGroup(!useStarGroup)} />}
-        label={useStarGroup ? "Star Groups" : "Open Groups"}
-        sx={{ mb: 2 }}
-      />
+    <Box sx={{ mt: 6 }}>
+      <FormControl component="fieldset" sx={{ mb: 2}}>
+        <RadioGroup
+          row
+          value={useStarGroup ? "star" : "open"}
+          onChange={(event) => setUseStarGroup(event.target.value === "star")}
+        >
+          <FormControlLabel value="star" control={<Radio />} label="Star Groups" />
+          <FormControlLabel value="open" control={<Radio />} label="Open Groups" />
+        </RadioGroup>
+      </FormControl>
 
-      {/* Group Selector */}
-      <Select value={selectedGroup} onChange={(e) => setSelectedGroup(e.target.value)} displayEmpty sx={{ mb: 3, minWidth: 200 }}>
-        <MenuItem value="">Select a {useStarGroup ? "Star" : "Open"} Group</MenuItem>
-        {groups.map((group, index) => (
-          <MenuItem key={index} value={group}>{group}</MenuItem>
-        ))}
-      </Select>
+        {/* Group Selector */}
+        <Select value={selectedGroup} onChange={(e) => setSelectedGroup(e.target.value)} displayEmpty sx={{ mb: 3, minWidth: 200 }}>
+          <MenuItem value="">Select a {useStarGroup ? "Star" : "Open"} Group</MenuItem>
+          {groups.map((group, index) => (
+            <MenuItem key={index} value={group}>{group}</MenuItem>
+          ))}
+        </Select>
+      </Box>
 
       {/* 🔹 Tabs (Only Show If a Group Is Selected) */}
       {selectedGroup && (
