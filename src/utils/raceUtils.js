@@ -21,14 +21,20 @@ export const filterDriverRaces = (raceData, driver, raceDates, excludePlayoffs, 
 
   // 📌 Utility function to calculate average finish position
   export const getAverageFeatureValue = (raceData, driver, raceDates, excludePlayoffs, excludeDnf, feature) => {
+    var totalFeatureValue;
     const driverRaces = filterDriverRaces(raceData, driver, raceDates, excludePlayoffs, excludeDnf);
     if (driverRaces.length === 0) return "-";
-    const totalFeatureValue = driverRaces.reduce((sum, race) => sum + race[feature], 0);
+    if (feature === "fantasy_points") {
+      totalFeatureValue = driverRaces.reduce((sum, race) => sum + race.finish_position_points + race.stage_points, 0);
+    } else {
+      totalFeatureValue = driverRaces.reduce((sum, race) => sum + race[feature], 0);
+    }    
     return (totalFeatureValue / driverRaces.length).toFixed(2);
   };
   
   // 📌 Utility function to get a driver's finish position in a specific race
   export const getFeatureValue = (raceData, driver, raceDate, excludePlayoffs, excludeDnf, feature) => {
+    var feature_value;
     const raceEntry = raceData.find(
       (entry) =>
         entry.driver_name === driver &&
@@ -37,41 +43,51 @@ export const filterDriverRaces = (raceData, driver, raceDates, excludePlayoffs, 
         (!excludeDnf || entry.status === 'finished')
     );
     if (!raceEntry) return { value: "-", status: 'finished' };
-    return { value: raceEntry[feature], status: raceEntry.status };
+    if (feature === "fantasy_points") {
+      feature_value = (raceEntry?.finish_position_points ?? 0) + (raceEntry?.stage_points ?? 0);
+    } else {
+      feature_value = raceEntry?.[feature] ?? null;
+    }    
+    return { value: feature_value, status: raceEntry.status };
   };
 
   export const getTeamFeatureValue = (raceData, team, raceDate, excludePlayoffs, excludeDnf, feature) => {
+    var totalFeatureValue;
     const teamRaces = filterTeamRaces(raceData, team, raceDate, excludePlayoffs, excludeDnf);
     if (teamRaces.length === 0) return "-";
-    const totalFeatureValue = teamRaces.reduce((sum, race) => sum + race[feature], 0);
+    if (feature === "fantasy_points") {
+      totalFeatureValue = teamRaces.reduce((sum, race) => sum + race.finish_position_points + race.stage_points, 0);
+    } else {
+      totalFeatureValue = teamRaces.reduce((sum, race) => sum + race[feature], 0);
+    }    
     return (totalFeatureValue / teamRaces.length).toFixed(2);
   };
 
-  export const getTeamFantasyPoints = (raceData, team, raceDate, excludePlayoffs, excludeDnf, feature) => {
-    const teamRaces = filterTeamRaces(raceData, team, raceDate, excludePlayoffs, excludeDnf);
-    if (teamRaces.length === 0) return "-";
-    const totalFeatureValue = teamRaces.reduce((sum, race) => sum + race.finish_position_points + race.stage_points, 0);
-    return (totalFeatureValue / teamRaces.length).toFixed(2);
-  };
+  // export const getTeamFantasyPoints = (raceData, team, raceDate, excludePlayoffs, excludeDnf, feature) => {
+  //   const teamRaces = filterTeamRaces(raceData, team, raceDate, excludePlayoffs, excludeDnf);
+  //   if (teamRaces.length === 0) return "-";
+  //   const totalFeatureValue = teamRaces.reduce((sum, race) => sum + race.finish_position_points + race.stage_points, 0);
+  //   return (totalFeatureValue / teamRaces.length).toFixed(2);
+  // };
 
-  export const getFantasyPoints = (raceData, driver, raceDate, excludePlayoffs, excludeDnf) => {
-    const raceEntry = raceData.find(
-      (entry) =>
-        entry.driver_name === driver &&
-        entry.race_date === raceDate &&
-        (!excludePlayoffs || entry.season_stage === "season") &&
-        (!excludeDnf || entry.status === 'finished')
-    );
-    if (!raceEntry) return { value: "-", status: 'finished' };
-    return { value: raceEntry.finish_position_points + raceEntry.stage_points, status: raceEntry.status };
-  };
+  // export const getFantasyPoints = (raceData, driver, raceDate, excludePlayoffs, excludeDnf) => {
+  //   const raceEntry = raceData.find(
+  //     (entry) =>
+  //       entry.driver_name === driver &&
+  //       entry.race_date === raceDate &&
+  //       (!excludePlayoffs || entry.season_stage === "season") &&
+  //       (!excludeDnf || entry.status === 'finished')
+  //   );
+  //   if (!raceEntry) return { value: "-", status: 'finished' };
+  //   return { value: raceEntry.finish_position_points + raceEntry.stage_points, status: raceEntry.status };
+  // };
 
-  export const getAverageFantasyPoints = (raceData, driver, raceDates, excludePlayoffs, excludeDnf) => {
-    const driverRaces = filterDriverRaces(raceData, driver, raceDates, excludePlayoffs, excludeDnf);
-    if (driverRaces.length === 0) return "-";
-    const totalFantasyPoints = driverRaces.reduce((sum, race) => sum + race.finish_position_points + race.stage_points, 0);
-    return (totalFantasyPoints / driverRaces.length).toFixed(2);
-  };
+  // export const getAverageFantasyPoints = (raceData, driver, raceDates, excludePlayoffs, excludeDnf) => {
+  //   const driverRaces = filterDriverRaces(raceData, driver, raceDates, excludePlayoffs, excludeDnf);
+  //   if (driverRaces.length === 0) return "-";
+  //   const totalFantasyPoints = driverRaces.reduce((sum, race) => sum + race.finish_position_points + race.stage_points, 0);
+  //   return (totalFantasyPoints / driverRaces.length).toFixed(2);
+  // };
   
   // 📌 Utility function to format dates as "Spring/Fall YEAR"
   export const getSeasonLabel = (dateString) => {

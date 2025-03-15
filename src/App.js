@@ -16,16 +16,10 @@ import {
 import raceData from "./data/data.json";
 import nextRaceData from "./data/next_race_data.json";
 import trackSimilarity from "./data/track_similarity.json";
-import RaceResultsTable from "./components/driver_tables/RaceResultsTable";
-import QualResultsTable from "./components/driver_tables/QualResultsTable";
-import FantasyPointsTable from "./components/driver_tables/FantasyPointsTable";
-import RatingTable from "./components/driver_tables/RatingTable";
 import OverviewTable from "./components/driver_tables/OverviewTable";
 import DriverPerformanceChart from "./components/driver_tables/DriverPerformanceChart";
-import TeamRaceResultsTable from "./components/team_tables/TeamRaceResultsTable";
-import TeamQualResultsTable from "./components/team_tables/TeamQualResultsTable";
-import TeamFantasyPointsTable from "./components/team_tables/TeamFantasyPointsTable";
-import TeamRatingTable from "./components/team_tables/TeamRatingTable";
+import DriverFantasyTable from "./components/driver_tables/DriverFantasyTable";
+import TeamFantasyTable from "./components/team_tables/TeamFantasyTable";
 
 const nextRaceTrack = nextRaceData["next_race_track"];
 const groupsOrder = ["I", "I-II", "II", "III", "IV"];
@@ -126,10 +120,10 @@ const App = () => {
 
   return (
     <Container sx={{ textAlign: "center", mt: 4 }}>
-      <h1>BOE NASCAR Fantasy 69XL/R34</h1>
+      {/* <h1>BOE NASCAR Fantasy 69XL/R34</h1> */}
       <h2>{nextRaceTrack}</h2>
 
-      <Box sx={{ mt: 6 }}>
+      <Box sx={{ mt: 2 }}>
         <FormControl component="fieldset" sx={{ mb: 2 }}>
           <RadioGroup
             row
@@ -154,7 +148,7 @@ const App = () => {
           value={selectedGroup}
           onChange={(e) => setSelectedGroup(e.target.value)}
           displayEmpty
-          sx={{ mb: 3, minWidth: 200 }}
+          sx={{ mb: 2, minWidth: 200 }}
         >
           <MenuItem value="">
             Select a {useStarGroup ? "Star" : "Open"} Group
@@ -169,13 +163,13 @@ const App = () => {
 
       {/* 🔹 Tabs (Only Show If a Group Is Selected) */}
       {selectedGroup && (
-        <Box sx={{ borderBottom: 1, borderColor: "divider", mb: 3 }}>
+        <Box sx={{ borderBottom: 1, borderColor: "divider", mb: 2 }}>
           <Tabs
             value={selectedTab}
             onChange={(event, newValue) => setSelectedTab(newValue)}
             centered
           >
-            <Tab label="Overview" />
+            {/* <Tab label="Overview" /> */}
             <Tab label="Driver Stats" />
             <Tab label="Team Stats" />
             <Tab label="Driver Performance" />
@@ -183,8 +177,8 @@ const App = () => {
         </Box>
       )}
 
-      {selectedTab === 1 && (
-        <Box sx={{ display: "flex", justifyContent: "center", mb: 3 }}>
+      {selectedTab === 0 && (
+        <Box sx={{ display: "flex", justifyContent: "center", mb: 2 }}>
           <ToggleButtonGroup
             value={selectedTable}
             exclusive
@@ -193,6 +187,7 @@ const App = () => {
             }
             aria-label="table type"
           >
+            <ToggleButton value="overview">Overview</ToggleButton>  
             <ToggleButton value="finish">Finish Position</ToggleButton>
             <ToggleButton value="start">Qualification Position</ToggleButton>
             <ToggleButton value="points">Fantasy Points</ToggleButton>
@@ -201,8 +196,8 @@ const App = () => {
         </Box>
       )}
 
-      {selectedTab === 2 && (
-        <Box sx={{ display: "flex", justifyContent: "center", mb: 3 }}>
+      {selectedTab === 1 && (
+        <Box sx={{ display: "flex", justifyContent: "center", mb: 2 }}>
           <ToggleButtonGroup
             value={selectedTable}
             exclusive
@@ -221,95 +216,114 @@ const App = () => {
 
       {selectedGroup && drivers.length > 0 && raceDates.length > 0 && (
         <>
-          {selectedTab === 0 && (
+          {/* {selectedTab === 0 && (
             <OverviewTable drivers={drivers} raceDates={raceDates} />
-          )}
-          {selectedTab === 1 &&
+          )} */}
+          {selectedTab === 0 &&
             selectedGroup &&
             drivers.length > 0 &&
             raceDates.length > 0 && (
               <>
+                {selectedTable === "overview" && (
+                  <OverviewTable drivers={drivers} raceDates={raceDates} />
+                )}
                 {selectedTable === "finish" && (
-                  <RaceResultsTable
+                  <DriverFantasyTable
                     drivers={drivers}
                     raceDates={raceDates}
                     similarRaceDates={similarRaceDates}
                     allRaceDates={allRaceDates}
                     currentSeasonDates={currentSeasonDates}
+                    feature={"race_pos"}
+                    name={"Finish Position"}
                   />
                 )}
                 {selectedTable === "start" && (
-                  <QualResultsTable
+                  <DriverFantasyTable
                     drivers={drivers}
                     raceDates={raceDates}
                     similarRaceDates={similarRaceDates}
                     allRaceDates={allRaceDates}
                     currentSeasonDates={currentSeasonDates}
+                    feature={"quali_pos"}
+                    name={"Qualification Position"}
                   />
                 )}
                 {selectedTable === "points" && (
-                  <FantasyPointsTable
+                  <DriverFantasyTable
                     drivers={drivers}
                     raceDates={raceDates}
                     similarRaceDates={similarRaceDates}
                     allRaceDates={allRaceDates}
                     currentSeasonDates={currentSeasonDates}
-                  />
+                    feature={"fantasy_points"}
+                    name={"Fantasy Points"}
+                />
                 )}
                 {selectedTable === "rating" && (
-                  <RatingTable
+                  <DriverFantasyTable
                     drivers={drivers}
                     raceDates={raceDates}
                     similarRaceDates={similarRaceDates}
                     allRaceDates={allRaceDates}
                     currentSeasonDates={currentSeasonDates}
-                  />
+                    feature={"driver_rating"}
+                    name={"Rating"}
+                />
                 )}
               </>
             )}
-          {selectedTab === 2 &&
+          {selectedTab === 1 &&
             teams.length > 0 &&
             raceDates.length > 0 && (
               <>
                 {selectedTable === "finish" && (
-                  <TeamRaceResultsTable
+                  <TeamFantasyTable
                     teams={teams}
                     raceDates={raceDates}
                     similarRaceDates={similarRaceDates}
                     allRaceDates={allRaceDates}
                     currentSeasonDates={currentSeasonDates}
+                    feature={"race_pos"}
+                    name={"Finish Position"}
                   />
                 )}
                 {selectedTable === "start" && (
-                  <TeamQualResultsTable
+                  <TeamFantasyTable
                     teams={teams}
                     raceDates={raceDates}
                     similarRaceDates={similarRaceDates}
                     allRaceDates={allRaceDates}
                     currentSeasonDates={currentSeasonDates}
+                    feature={"quali_pos"}
+                    name={"Qualification Position"}
                   />
                 )}
                 {selectedTable === "points" && (
-                  <TeamFantasyPointsTable
+                  <TeamFantasyTable
                     teams={teams}
                     raceDates={raceDates}
                     similarRaceDates={similarRaceDates}
                     allRaceDates={allRaceDates}
                     currentSeasonDates={currentSeasonDates}
+                    feature={"fantasy_points"}
+                    name={"Fantasy Points"}
                   />
                 )}
                 {selectedTable === "rating" && (
-                  <TeamRatingTable
+                  <TeamFantasyTable
                     teams={teams}
                     raceDates={raceDates}
                     similarRaceDates={similarRaceDates}
                     allRaceDates={allRaceDates}
                     currentSeasonDates={currentSeasonDates}
+                    feature={"driver_rating"}
+                    name={"Rating"}
                   />
                 )}
               </>
             )}
-          {selectedTab === 3 && (
+          {selectedTab === 2 && (
             <DriverPerformanceChart raceData={raceData} drivers={drivers} />
           )}
         </>

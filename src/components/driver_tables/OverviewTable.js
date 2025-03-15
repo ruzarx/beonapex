@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody, Checkbox, FormControlLabel } from "@mui/material";
 import raceData from "../../data/data.json"; 
-import { getAverageFeatureValue, getAverageFantasyPoints } from "../../utils/raceUtils";
+import { getAverageFeatureValue } from "../../utils/raceUtils";
 
 const OverviewTable = ({ drivers, raceDates }) => {
   const [excludePlayoffs, setExcludePlayoffs] = useState(false);
@@ -41,7 +41,7 @@ const OverviewTable = ({ drivers, raceDates }) => {
                 {getAverageFeatureValue(raceData, driver, raceDates, excludePlayoffs, excludeDnf, "quali_pos")}
               </TableCell>
               <TableCell sx={{ width: "80px", textAlign: "center" }}>
-                {getAverageFantasyPoints(raceData, driver, raceDates, excludePlayoffs, excludeDnf)}
+                {getAverageFeatureValue(raceData, driver, raceDates, excludePlayoffs, excludeDnf, "fantasy_points")}
               </TableCell>
               <TableCell sx={{ width: "80px", textAlign: "center" }}>
                 {getAverageFeatureValue(raceData, driver, raceDates, excludePlayoffs, excludeDnf, "driver_rating")}
