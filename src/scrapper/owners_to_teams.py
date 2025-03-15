@@ -19,15 +19,10 @@ owners_to_teams = {
     'TMT Racing': '23XI Racing',
     'Carl Long': 'Power Source',
     'Johnathan Cohen': 'NY Racing Team',
-    
+    'HYAK Motorsports': 'HYAK Motorsports',
+    'Gene Haas': 'Haas Factory Team',
+    'Petty GMS Motorsports': 'Petty GMS Motorsports',
+    'Team Hezeberg': 'Team Hezeberg',
+    'Team AmeriVet': 'Team Amerivet',
+    'JR Motorsports': 'JR Motorsports',
 }
-
-
-'''
-Beard Motorsports : 62
-Live Fast Motorsports : 78
-Power Source : 66
-NY Racing Team : 44
-Team Amerivet : 50
-'''
-
