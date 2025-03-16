@@ -13,6 +13,11 @@ import {
   ToggleButton,
   ToggleButtonGroup,
 } from "@mui/material";
+import { motion } from "framer-motion";
+// import DashboardIcon from "@mui/icons-material/Dashboard";
+import PeopleIcon from "@mui/icons-material/People";
+import GroupsIcon from "@mui/icons-material/Groups";
+import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import raceData from "./data/data.json";
 import nextRaceData from "./data/next_race_data.json";
 import trackSimilarity from "./data/track_similarity.json";
@@ -164,16 +169,26 @@ const App = () => {
       {/* 🔹 Tabs (Only Show If a Group Is Selected) */}
       {selectedGroup && (
         <Box sx={{ borderBottom: 1, borderColor: "divider", mb: 2 }}>
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+          >
           <Tabs
             value={selectedTab}
             onChange={(event, newValue) => setSelectedTab(newValue)}
             centered
+            sx={{
+              "& .MuiTabs-indicator": { backgroundColor: "primary.main", height: 2 },
+              "& .MuiTab-root": { minHeight: 36, padding: "6px 12px", fontSize: "0.875rem" }
+            }}
           >
-            {/* <Tab label="Overview" /> */}
-            <Tab label="Driver Stats" />
-            <Tab label="Team Stats" />
-            <Tab label="Driver Performance" />
+            {/* <Tab icon={<DashboardIcon fontSize="small" />} label="Overview" /> */}
+            <Tab icon={<PeopleIcon fontSize="small" />} label="Driver Stats" />
+          <Tab icon={<GroupsIcon fontSize="small" />} label="Team Stats" />
+          <Tab icon={<TrendingUpIcon fontSize="small" />} label="Driver Performance" />
           </Tabs>
+          </motion.div>
         </Box>
       )}
 
