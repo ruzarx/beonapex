@@ -31,6 +31,7 @@ class FeatureProcessor:
         calendar['track_type'] = 'Superspeedway'
         df = df.merge(calendar[['season_year', 'race_number', 'season_stage']], on=['season_year', 'race_number'])
         loop_data = pd.read_csv('data/loop_data.csv')
+        loop_data = loop_data.drop(columns='laps_led')
         df = df.merge(loop_data, on=['season_year', 'race_number', 'driver_name'], how='left')
         df = df[df['season_year'].isin(seasons)].reset_index(drop=True)
         self._get_next_race(calendar)

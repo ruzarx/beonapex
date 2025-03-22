@@ -1,35 +1,41 @@
 import { useState } from "react";
 import { Tabs, Tab, Box } from "@mui/material";
 
-const RaceSeriesMenu = ({ onSeriesChange, onNascarSubMenuChange }) => {
+const RaceSeriesMenu = ({ onNascarSubMenuChange }) => {
   const [selectedSeries, setSelectedSeries] = useState("NASCAR");
-  const [selectedNascarTab, setSelectedNascarTab] = useState("Fantasy"); // Default NASCAR tab
+  const [selectedNascarTab, setSelectedNascarTab] = useState("Fantasy");
 
-  const handleChange = (event, newValue) => {
+  // Handles switching between different racing series
+  const handleSeriesChange = (event, newValue) => {
     setSelectedSeries(newValue);
-    onSeriesChange(newValue);
 
-    // If NASCAR is selected, notify App.js of the default sub-menu
+    // Default to "Fantasy" when switching to NASCAR
     if (newValue === "NASCAR") {
-      onNascarSubMenuChange("Fantasy");
+      setSelectedNascarTab("Fantasy");
+      onNascarSubMenuChange("Fantasy"); // Notify App.js
+    } else {
+      onNascarSubMenuChange(null); // No NASCAR sub-menu for other series
     }
   };
 
+  // Handles switching between NASCAR sub-menu tabs
   const handleNascarTabChange = (event, newValue) => {
     setSelectedNascarTab(newValue);
-    onNascarSubMenuChange(newValue);
+    onNascarSubMenuChange(newValue); // Notify App.js
   };
 
   return (
     <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-      {/* Top-Level Menu */}
-      <Tabs value={selectedSeries} onChange={handleChange} centered>
-        <Tab label="NASCAR" value="NASCAR" />
-        <Tab label="Formula 1" value="Formula 1" />
-        <Tab label="Supercars" value="Supercars" />
-      </Tabs>
+      {/* Top-Level Menu for Series Selection */}
+      <Box sx={{ position: "relative" }}>
+        <Tabs value={selectedSeries} onChange={handleSeriesChange} centered>
+          <Tab label="NASCAR" value="NASCAR" />
+          <Tab label="Formula 1" value="Formula 1" />
+          <Tab label="Supercars" value="Supercars" />
+        </Tabs>
+      </Box>
 
-      {/* Sub-Menu for NASCAR */}
+      {/* NASCAR Sub-Menu Tabs */}
       {selectedSeries === "NASCAR" && (
         <Box sx={{ mt: 1, borderBottom: 1, borderColor: "divider" }}>
           <Tabs value={selectedNascarTab} onChange={handleNascarTabChange} centered>

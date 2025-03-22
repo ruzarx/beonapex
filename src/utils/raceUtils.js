@@ -32,6 +32,17 @@ export const getAverageFeatureValue = (raceData, driver, raceDates, excludePlayo
   return (totalFeatureValue / driverRaces.length).toFixed(2);
 };
 
+export const getCleanAverageFeatureValue = ( feature, races ) => {
+  var totalFeatureValue;
+  if (races.length === 0) return "-";
+  if (feature === "fantasy_points") {
+    totalFeatureValue = races.reduce((sum, race) => sum + race.finish_position_points + race.stage_points, 0);
+  } else {
+    totalFeatureValue = races.reduce((sum, race) => sum + race[feature], 0);
+  }    
+  return (totalFeatureValue / races.length).toFixed(2);
+}
+
 // 📌 Utility function to get a driver's finish position in a specific race
 export const getFeatureValue = (raceData, driver, raceDate, excludePlayoffs, excludeDnf, feature) => {
   var feature_value;
@@ -100,28 +111,23 @@ export const getSeasonLabel = (dateString) => {
   return `Fall ${year}`;
 };
 
-export const getRankInGroup = (raceData, driver, group_drivers, feature, raceDates) => {
-  const driverAverages = group_drivers.map(d => ({
-    driver: d,
-    average: getAverageFeatureValue(raceData, d, raceDates, false, false, feature)
-  }));
-
-  // Remove drivers with missing or undefined values
-  const validDrivers = driverAverages.filter(d => d.average !== null && !isNaN(d.average));
-
-  // Sort drivers based on feature type (lower is better for finish/start, higher is better for rating/points)
-  validDrivers.sort((a, b) => {
+export const getRankInGroup = (feature, driver, driverAverages) => {
+  driverAverages.sort((a, b) => {
+    const valA = a[feature];
+    const valB = b[feature];
+    const isInvalidA = valA === "-" || isNaN(valA);
+    const isInvalidB = valB === "-" || isNaN(valB);
+    if (isInvalidA && isInvalidB) return 0; // Keep order if both are "-"
+    if (isInvalidA) return 1; // Move A to the end
+    if (isInvalidB) return -1; // Move B to the end
     if (feature === "race_pos" || feature === "quali_pos") {
-      return a.average - b.average; // Lower is better
+      return valA - valB;
     } else {
-      return b.average - a.average; // Higher is better
+      return valB - valA;
     }
   });
-
-  // Find the rank of the target driver
-  const rank = validDrivers.findIndex(d => d.driver === driver) + 1;
-
-  return rank || validDrivers.length + 1; // If not found, return last place
+  const rank = driverAverages.findIndex(d => d.driver === driver) + 1;
+  return rank || driverAverages.length + 1;
 };
 
 

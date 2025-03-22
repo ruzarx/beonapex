@@ -26,7 +26,7 @@ const MainFantasyScreen = () => {
   const [useStarGroup, setUseStarGroup] = useState(true);
   const [selectedGroup, setSelectedGroup] = useState("I-II");
   const [groups, setGroups] = useState(["I-II", "III", "IV"]);
-  const [drivers, setDrivers] = useState([]);
+  const [groupDrivers, setGroupDrivers] = useState([]);
   const [raceDates, setRaceDates] = useState([]);
   const [similarRaceDates, setSimilarRaceDates] = useState([]);
   const [allRaceDates, setAllRaceDates] = useState([]);
@@ -102,20 +102,21 @@ const MainFantasyScreen = () => {
         ...new Set(allPastSeasonRaces.map((race) => race.race_date)),
       ]);
 
-      const groupDrivers = [
+      const allGroupDrivers = [
         ...new Set(
           raceData
             .filter((entry) => entry[groupType] === selectedGroup)
             .map((entry) => entry.driver_name)
         ),
       ];
-      setDrivers(groupDrivers);
+      setGroupDrivers(allGroupDrivers);
     }
   }, [selectedGroup, useStarGroup]);
 
   return (
     <Container sx={{ textAlign: "center", mt: 4 }}>
       {/* <h1>BOE NASCAR Fantasy 69XL/R34</h1> */}
+      {/* <Typography sx={{color: 'text.primary'}}>{nextRaceTrack}</Typography > */}
       <h2>{nextRaceTrack}</h2>
 
       <Box sx={{ mt: 2 }}>
@@ -156,35 +157,40 @@ const MainFantasyScreen = () => {
         </Select>
       </Box>
 
-    <Box sx={{ display: "flex", justifyContent: "center", mb: 2 }}>
+      <Box sx={{ display: "flex", justifyContent: "center", mb: 2 }}>
         <ToggleButtonGroup
-        value={selectedTable}
-        exclusive
-        onChange={(event, newType) =>
+          value={selectedTable}
+          exclusive
+          onChange={(event, newType) =>
             newType !== null && setSelectedTable(newType)
-        }
-        aria-label="table type"
+          }
+          aria-label="table type"
         >
-        <ToggleButton value="overview">Overview</ToggleButton>  
-        <ToggleButton value="finish">Finish Position</ToggleButton>
-        <ToggleButton value="start">Qualification Position</ToggleButton>
-        <ToggleButton value="points">Fantasy Points</ToggleButton>
-        <ToggleButton value="rating">Rating</ToggleButton>
+          <ToggleButton value="overview">Overview</ToggleButton>
+          <ToggleButton value="finish">Finish Position</ToggleButton>
+          <ToggleButton value="start">Qualification Position</ToggleButton>
+          <ToggleButton value="points">Fantasy Points</ToggleButton>
+          <ToggleButton value="rating">Rating</ToggleButton>
         </ToggleButtonGroup>
-    </Box>
+      </Box>
 
-      {selectedGroup && drivers.length > 0 && raceDates.length > 0 && (
+      {selectedGroup && groupDrivers.length > 0 && raceDates.length > 0 && (
         <>
           {selectedGroup &&
-            drivers.length > 0 &&
+            groupDrivers.length > 0 &&
             raceDates.length > 0 && (
               <>
                 {selectedTable === "overview" && (
-                  <OverviewTable drivers={drivers} raceDates={raceDates} />
+                  <OverviewTable
+                    groupDrivers={groupDrivers}
+                    raceDates={raceDates}
+                    currentSeasonDates={currentSeasonDates}
+                    pastSeasonDates={pastSeasonDates}
+                  />
                 )}
                 {selectedTable === "finish" && (
                   <DriverFantasyTable
-                    drivers={drivers}
+                    groupDrivers={groupDrivers}
                     raceDates={raceDates}
                     similarRaceDates={similarRaceDates}
                     allRaceDates={allRaceDates}
@@ -196,7 +202,7 @@ const MainFantasyScreen = () => {
                 )}
                 {selectedTable === "start" && (
                   <DriverFantasyTable
-                    drivers={drivers}
+                    groupDrivers={groupDrivers}
                     raceDates={raceDates}
                     similarRaceDates={similarRaceDates}
                     allRaceDates={allRaceDates}
@@ -208,7 +214,7 @@ const MainFantasyScreen = () => {
                 )}
                 {selectedTable === "points" && (
                   <DriverFantasyTable
-                    drivers={drivers}
+                    groupDrivers={groupDrivers}
                     raceDates={raceDates}
                     similarRaceDates={similarRaceDates}
                     allRaceDates={allRaceDates}
@@ -216,11 +222,11 @@ const MainFantasyScreen = () => {
                     pastSeasonDates={pastSeasonDates}
                     feature={"fantasy_points"}
                     name={"Fantasy Points"}
-                />
+                  />
                 )}
                 {selectedTable === "rating" && (
                   <DriverFantasyTable
-                    drivers={drivers}
+                    groupDrivers={groupDrivers}
                     raceDates={raceDates}
                     similarRaceDates={similarRaceDates}
                     allRaceDates={allRaceDates}
@@ -228,7 +234,7 @@ const MainFantasyScreen = () => {
                     pastSeasonDates={pastSeasonDates}
                     feature={"driver_rating"}
                     name={"Rating"}
-                />
+                  />
                 )}
               </>
             )}
