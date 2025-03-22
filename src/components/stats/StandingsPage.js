@@ -17,7 +17,7 @@ const StandingsPage = () => {
 
   const [currentRace, setCurrentRace] = useState(initialRaceNumber);
   const [seasonYear, setSeasonYear] = useState(initialSeasonYear);
-  const [drawerOpen, setDrawerOpen] = useState(true);
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   const handleRaceSelect = (race) => {
     setCurrentRace(race.race_number);
