@@ -29,7 +29,10 @@ class DataProcessor:
             standings = pd.concat([standings, season_standings])
         standings = standings.merge(df[['season_year', 'race_number', 'race_date']].drop_duplicates(), on=['season_year', 'race_number'])
         standings.to_json('../data/standings.json', orient='records')
-        groups = self.make_fantasy_groups(standings)
+        fantasy_group_standings = standings[
+            (standings['season_year'] == int(last_race_data['last_race_season'])) &
+             (standings['race_number'] == int(last_race_data['last_race_number']))]
+        groups = self.make_fantasy_groups(fantasy_group_standings)
         df = df.merge(groups, on='driver_name', how='left')
         df.to_json('../data/data.json', orient='records')
         return

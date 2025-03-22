@@ -107,11 +107,31 @@ const DriverFantasyTable = ({
       </Box>
 
       {/* Table */}
-      <TableContainer sx={{ maxHeight: 700, borderRadius: 2 }}>
+      <TableContainer
+          sx={{
+            maxHeight: 700,
+            borderRadius: 2,
+            overflowY: "auto",
+            scrollbarWidth: "none", // Firefox: hides scrollbar
+            "&::-webkit-scrollbar": {
+              width: 0, // Chrome, Safari: hidden by default
+            },
+            "&:hover::-webkit-scrollbar": {
+              width: "6px", // Appear on hover
+            },
+            "&:hover::-webkit-scrollbar-thumb": {
+              backgroundColor: "#555", // Dark thumb
+              borderRadius: "4px",
+            },
+            "&:hover::-webkit-scrollbar-track": {
+              backgroundColor: "transparent",
+            },
+          }}
+        >
         <Table stickyHeader>
           {/* Header - Unified Column */}
           <TableHead>
-            <TableRow sx={{ bgcolor: "primary.main" }}>
+            <TableRow sx={{ bgcolor: "primary.main", position: "sticky", top: 0, zIndex: 2 }}>
               <TableCell rowSpan={2} sx={{ fontWeight: "bold", px: 2 }}>#</TableCell>
               <TableCell rowSpan={2} sx={{ fontWeight: "bold", px: 2 }}>Driver</TableCell>
               <TableCell colSpan={4} sx={{ fontWeight: "bold", textAlign: "center" }}>Average {name}</TableCell>
@@ -121,7 +141,7 @@ const DriverFantasyTable = ({
             </TableRow>
 
             {/* Sub-Headers */}
-            <TableRow sx={{ bgcolor: "primary.light" }}>
+            <TableRow sx={{ bgcolor: "primary.light", position: "sticky", top: 53, zIndex: 1 }}>
                 <Tooltip title={`Average ${name.toLowerCase()} on this track`}>
                 <TableCell sx={{ fontWeight: "bold", textAlign: "center" }}>This Track</TableCell>
               </Tooltip>

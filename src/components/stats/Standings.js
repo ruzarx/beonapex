@@ -1,17 +1,12 @@
-import { Typography, Paper, Table, TableBody, TableContainer, TableHead, TableRow, TableCell } from "@mui/material";
+import { Paper, Table, TableBody, TableContainer, TableHead, TableRow, TableCell } from "@mui/material";
 import React from "react";
-// import raceData from "../../data/data.json"; 
 import standingsData from "../../data/standings.json";
-// import nextRaceData from "../../data/next_race_data.json";
 import { getStandings, getBestFinish } from "../../utils/standingsCalculations";
 
-// const seasonYear = nextRaceData["next_race_number"] <= 36 ? nextRaceData["next_race_season"] : nextRaceData["next_race_season"] - 1
-// const currentRace = nextRaceData["next_race_number"] - 1;
 
 const Standings = ({ seasonYear, currentRace }) => {
   const allDrivers = [...new Set(standingsData.filter((race) => race.season_year === seasonYear && race.race_number <= currentRace).map((race) => race.driver_name))];
   console.log(seasonYear, currentRace);
-  // const currentSeasonDates = [...new Set(standingsData.filter((race) => race.season_year === seasonYear && race.race_number <= currentRace).map((race) => race.race_date))];
   
   const driverCarNumbers = {};
   const currentSeasonRacesData = standingsData.filter((race) => race.season_year === seasonYear && race.race_number === currentRace);
@@ -30,7 +25,27 @@ const Standings = ({ seasonYear, currentRace }) => {
 
   return (
     <Paper sx={{ borderRadius: 3, p: 3, boxShadow: 3 }}>
-      <TableContainer sx={{ maxHeight: 700, borderRadius: 2 }}>
+      <TableContainer
+          sx={{
+            maxHeight: 700,
+            borderRadius: 2,
+            overflowY: "auto",
+            scrollbarWidth: "none", // Firefox: hides scrollbar
+            "&::-webkit-scrollbar": {
+              width: 0, // Chrome, Safari: hidden by default
+            },
+            "&:hover::-webkit-scrollbar": {
+              width: "6px", // Appear on hover
+            },
+            "&:hover::-webkit-scrollbar-thumb": {
+              backgroundColor: "#555", // Dark thumb
+              borderRadius: "4px",
+            },
+            "&:hover::-webkit-scrollbar-track": {
+              backgroundColor: "transparent",
+            },
+          }}
+        >
         <Table stickyHeader>
           <TableHead>
             <TableRow sx={{ bgcolor: "primary.main" }}>

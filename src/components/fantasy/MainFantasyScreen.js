@@ -115,8 +115,6 @@ const MainFantasyScreen = () => {
 
   return (
     <Container sx={{ textAlign: "center", mt: 4 }}>
-      {/* <h1>BOE NASCAR Fantasy 69XL/R34</h1> */}
-      {/* <Typography sx={{color: 'text.primary'}}>{nextRaceTrack}</Typography > */}
       <h2>{nextRaceTrack}</h2>
 
       <Box sx={{ mt: 2 }}>
