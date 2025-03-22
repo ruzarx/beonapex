@@ -16,10 +16,18 @@ class DataProcessor:
             json.dump(next_race_data, file)
         with open('data/last_race_data.json', 'w') as file:
             json.dump(last_race_data, file)
-        standings = pd.DataFrame(self.get_standings(
-                last_race_data['last_race_season'],
-                last_race_data['last_race_number']
-            ))[['driver_name', 'position', 'race_season_points', 'race_playoff_points', 'race_number', 'season_year']]
+        standings = pd.DataFrame()
+        for season_year in range(2025, int(last_race_data['last_race_season']) + 1):
+            season_standings = pd.DataFrame()
+            for race_number in range(1, 37):
+                if (season_year == int(last_race_data['last_race_season'])) & (race_number > int(last_race_data['last_race_number'])):
+                    break
+                current_standings = pd.DataFrame(self.get_standings(season_year, race_number))
+                season_standings = pd.concat([season_standings, current_standings])
+            car_numbers = df[df['season_year'] == season_year][['driver_name', 'car_number']].drop_duplicates()
+            season_standings = season_standings.merge(car_numbers, on='driver_name')
+            standings = pd.concat([standings, season_standings])
+        standings = standings.merge(df[['season_year', 'race_number', 'race_date']].drop_duplicates(), on=['season_year', 'race_number'])
         standings.to_json('../data/standings.json', orient='records')
         groups = self.make_fantasy_groups(standings)
         df = df.merge(groups, on='driver_name', how='left')
@@ -60,15 +68,15 @@ class DataProcessor:
     
     def make_fantasy_groups(self, standings: pd.DataFrame) -> pd.DataFrame:
         standings = standings[standings['driver_name'].isin(drivers_2025)].reset_index(drop=True)
-        standings = standings.sort_values('position', ascending=True)
+        standings = standings.sort_values('car_position', ascending=True)
         standings['open_group'] = 'I-II'
-        standings.loc[standings['position'] > 16, 'open_group'] = 'III'
-        standings.loc[standings['position'] > 28, 'open_group'] = 'IV'
+        standings.loc[standings['car_position'] > 16, 'open_group'] = 'III'
+        standings.loc[standings['car_position'] > 28, 'open_group'] = 'IV'
 
         standings['star_group'] = 'I'
-        standings.loc[standings['position'] > 10, 'star_group'] = 'II'
-        standings.loc[standings['position'] > 20, 'star_group'] = 'III'
-        standings.loc[standings['position'] > 30, 'star_group'] = 'IV'
+        standings.loc[standings['car_position'] > 10, 'star_group'] = 'II'
+        standings.loc[standings['car_position'] > 20, 'star_group'] = 'III'
+        standings.loc[standings['car_position'] > 30, 'star_group'] = 'IV'
         return standings[['driver_name', 'open_group', 'star_group']]
     
 if __name__ == "__main__":

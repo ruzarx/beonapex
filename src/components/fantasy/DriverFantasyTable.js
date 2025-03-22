@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import {
   TableContainer,
   Paper,
@@ -19,10 +19,10 @@ import {
   getFeatureValue,
   getSeasonLabel,
 } from "../../utils/raceUtils";
-import DriverDetailsDrawer from "./DriverDetailsDrawer";
+import DriverDetailsDrawer from "./FantasyDriverDetailsDrawer";
 
 const DriverFantasyTable = ({
-  drivers,
+  groupDrivers,
   raceDates,
   similarRaceDates,
   allRaceDates,
@@ -39,11 +39,10 @@ const DriverFantasyTable = ({
     setSelectedDriver(driver);
   };
 
-  const sortedDrivers = [...drivers].sort((a, b) => {
+  const sortedDrivers = [...groupDrivers].sort((a, b) => {
     const avgA = getAverageFeatureValue(raceData, a, raceDates, excludePlayoffs, excludeDnf, feature);
     const avgB = getAverageFeatureValue(raceData, b, raceDates, excludePlayoffs, excludeDnf, feature);
   
-    // Move "-" values to the end
     const isInvalidA = avgA === "-" || isNaN(avgA);
     const isInvalidB = avgB === "-" || isNaN(avgB);
   
@@ -51,17 +50,31 @@ const DriverFantasyTable = ({
     if (isInvalidA) return 1; // Move A to the end
     if (isInvalidB) return -1; // Move B to the end
   
-    // Normal sorting for valid numbers
     if (feature === "race_pos" || feature === "quali_pos") {
       return avgA - avgB; // Lower is better
     } else {
       return avgB - avgA; // Higher is better
     }
   });
-  
+
+  const driverCarNumbers = useMemo(() => {
+    const driverMap = {};
+
+    // Filter races that belong to the current season
+    const currentSeasonRaces = raceData.filter((entry) =>
+      currentSeasonDates.includes(entry.race_date)
+    );
+
+    // Loop through the data to map drivers to their latest car number
+    currentSeasonRaces.forEach((entry) => {
+      driverMap[entry.driver_name] = entry.car_number;
+    });
+
+    return driverMap; // Returns an object { driver_name: car_number }
+  }, [raceData, currentSeasonDates]);
 
   return (
-    <Paper sx={{ borderRadius: 3, p: 3, boxShadow: 3, bgcolor: "background.paper" }}>
+    <Paper sx={{ borderRadius: 3, p: 3, boxShadow: 3 }}>
       <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 2 }}>
         <Box sx={{ display: "flex", alignItems: "center", gap: 3 }}>
           <FormControlLabel
@@ -99,40 +112,27 @@ const DriverFantasyTable = ({
           {/* Header - Unified Column */}
           <TableHead>
             <TableRow sx={{ bgcolor: "primary.main" }}>
-              <TableCell rowSpan={2} sx={{ fontWeight: "bold", color: "black", px: 2 }}>
-                Driver
-              </TableCell>
-              <TableCell colSpan={4} sx={{ fontWeight: "bold", color: "black", textAlign: "center" }}>
-                Average {name}
-              </TableCell>
+              <TableCell rowSpan={2} sx={{ fontWeight: "bold", px: 2 }}>#</TableCell>
+              <TableCell rowSpan={2} sx={{ fontWeight: "bold", px: 2 }}>Driver</TableCell>
+              <TableCell colSpan={4} sx={{ fontWeight: "bold", textAlign: "center" }}>Average {name}</TableCell>
               {raceDates.map((race, index) => (
-                <TableCell key={index} rowSpan={2} sx={{ fontWeight: "bold", color: "black", textAlign: "center" }}>
-                  {getSeasonLabel(race)}
-                </TableCell>
+                <TableCell key={index} rowSpan={2} sx={{ fontWeight: "bold", textAlign: "center" }}>{getSeasonLabel(race)}</TableCell>
               ))}
             </TableRow>
 
             {/* Sub-Headers */}
             <TableRow sx={{ bgcolor: "primary.light" }}>
                 <Tooltip title={`Average ${name.toLowerCase()} on this track`}>
-                <TableCell sx={{ fontWeight: "bold", color: "black", textAlign: "center" }}>
-                  This Track
-                </TableCell>
+                <TableCell sx={{ fontWeight: "bold", textAlign: "center" }}>This Track</TableCell>
               </Tooltip>
               <Tooltip title={`Average ${name.toLowerCase()} on similar tracks`}>
-                <TableCell sx={{ fontWeight: "bold", color: "black", textAlign: "center" }}>
-                  Similar Tracks
-                </TableCell>
+                <TableCell sx={{ fontWeight: "bold", textAlign: "center" }}>Similar Tracks</TableCell>
               </Tooltip>
               <Tooltip title={`Average ${name.toLowerCase()} on all tracks`}>
-                <TableCell sx={{ fontWeight: "bold", color: "black", textAlign: "center" }}>
-                  All Tracks
-                </TableCell>
+                <TableCell sx={{ fontWeight: "bold", textAlign: "center" }}>All Tracks</TableCell>
               </Tooltip>
               <Tooltip title={`Average ${name.toLowerCase()} in the current season`}>
-                <TableCell sx={{ fontWeight: "bold", color: "black", textAlign: "center" }}>
-                  This Season
-                </TableCell>
+                <TableCell sx={{ fontWeight: "bold", textAlign: "center" }}>This Season</TableCell>
               </Tooltip>
             </TableRow>
           </TableHead>
@@ -147,6 +147,9 @@ const DriverFantasyTable = ({
                   "&:hover": { bgcolor: "action.selected", transition: "all 0.3s ease" },
                 }}
               >
+                <TableCell sx={{ width: "40px", fontWeight: "bold", px: 2, cursor: "pointer" }}>
+                  {driverCarNumbers[driver] || "-"}
+                </TableCell>
                 <TableCell 
                     sx={{ fontWeight: "bold", px: 2, cursor: "pointer" }}
                     onClick={() => handleDriverClick(driver)}
@@ -198,7 +201,7 @@ const DriverFantasyTable = ({
       {selectedDriver && (
         <DriverDetailsDrawer
           driver={selectedDriver}
-          drivers={drivers}
+          groupDrivers={groupDrivers}
           raceDates={raceDates}
           pastSeasonDates={pastSeasonDates}
           currentSeasonDates={currentSeasonDates}

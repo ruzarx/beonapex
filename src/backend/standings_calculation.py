@@ -1,8 +1,7 @@
 import pandas as pd
 
-from penalties import penalties
 
-def standings_calculation(raw_data: pd.DataFrame, current_race: int, season: int):
+def standings_calculation(raw_data: pd.DataFrame, current_race: int, season: int, penalties: dict):
     data = raw_data[raw_data['race_number'] <= current_race].reset_index(drop=True)
     all_drivers = raw_data['driver_name'].unique()
     season_points = {driver: 0 for driver in all_drivers}
@@ -144,15 +143,20 @@ def standings_calculation(raw_data: pd.DataFrame, current_race: int, season: int
                                                                      season_wins,
                                                                      playoff_16_wins,
                                                                      playoff_12_wins,
-                                                                     playoff_8_wins)
+                                                                     playoff_8_wins,
+                                                                     penalties)
     data = raw_data[
         ['driver_name', 'stage_wins', 'race_stage_points', 'race_finish_points']
         ].groupby('driver_name', as_index=False).sum()
     best_position = {}
     n_best_positions = {}
     for driver in all_drivers:
-        best_position[driver] = min(positions[driver])
-        n_best_positions[driver] = sum([1 if pos == min(positions[driver]) else 0 for pos in positions[driver]])
+        if len(positions[driver]) > 0:
+            best_position[driver] = min(positions[driver])
+            n_best_positions[driver] = sum([1 if pos == min(positions[driver]) else 0 for pos in positions[driver]])
+        else:
+            best_position[driver] = '-'
+            n_best_positions[driver] = '-'
         
     standings = pd.DataFrame({'driver_name': all_drivers,
                     'season_points': [season_points[driver] for driver in all_drivers],
@@ -188,7 +192,8 @@ def apply_penalties(season: int,
                     season_wins: dict,
                     playoff_16_wins: dict,
                     playoff_12_wins: dict,
-                    playoff_8_wins: dict):
+                    playoff_8_wins: dict,
+                    penalties: dict):
     for _, record in penalties.items():
         if (record['season'] == season) and (record['race'] == current_race):
             if record['type'] == 'season_points':

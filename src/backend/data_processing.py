@@ -6,6 +6,7 @@ from collections import defaultdict, OrderedDict
 import pandas as pd
 
 from owners_to_teams import owners_to_teams
+from penalties import penalties_driver, penalties_team
 
 from standings_calculation import standings_calculation
 
@@ -207,42 +208,44 @@ def compose_season_standings_data(raw_data: list[dict], race_number: str, curren
                                   'race_number': [res['race_number'] for res in raw_data],
                                   'race_pos': [res['race_pos'] for res in raw_data],
                                   })
-    standings_data = standings_calculation(raw_standings_data, int(race_number), int(current_season))
+    standings_data = standings_calculation(raw_standings_data, int(race_number), int(current_season), penalties_driver)
     standings_data = standings_data.sort_values(
         by=['season_points', 'best_position', 'n_best_positions'],
         ascending=[False, True, False])
-    standings_data['pos'] = [x for x in range(1, len(standings_data) + 1)]
+    standings_data['position'] = [x for x in range(1, len(standings_data) + 1)]
 
-    results = []
-    for (driver,
-        wins,
-        stage_wins,
-        race_stage_points,
-        race_finish_points,
-        race_season_points,
-        pos) in zip(
-                standings_data['driver_name'].tolist(),
-                standings_data['wins'].tolist(),
-                standings_data['stage_wins'].tolist(),
-                standings_data['race_stage_points'].tolist(),
-                standings_data['race_finish_points'].tolist(),
-                standings_data['season_points'].tolist(),
-                standings_data['pos'].tolist(),
-        ):
-        current_data = {
-            'driver_name': driver,
-            'position': pos,
-            'wins': wins,
-            'stage_wins': stage_wins,
-            'race_stage_points': race_stage_points,
-            'race_finish_points': race_finish_points,
-            'race_season_points': race_season_points,
-            'race_playoff_points': wins * 5 + stage_wins,
-            'season_year': current_season,
-            'race_number': race_number,
-            }
-        results.append(current_data)
-    return results
+    car_standings_data = standings_calculation(raw_standings_data, int(race_number), int(current_season), penalties_team)
+    car_standings_data = car_standings_data.sort_values(
+        by=['season_points', 'best_position', 'n_best_positions'],
+        ascending=[False, True, False])
+    car_standings_data['car_position'] = [x for x in range(1, len(car_standings_data) + 1)]
+    standings_cols = ['season_points',
+                    'wins',
+                    'season_wins',
+                    'playoff_16_wins',
+                    'playoff_12_wins',
+                    'playoff_8_wins',
+                    'stage_wins',
+                    'race_stage_points',
+                    'race_finish_points',
+                    'playoff_points',
+                    'qualified_to_16',
+                    'qualified_to_12',
+                    'qualified_to_8',
+                    'qualified_to_final',
+                    'champion',
+                    'best_position',
+                    'n_best_positions']
+    rename_cols = dict()
+    for col in standings_cols:
+        new_col_name = f"car_{col}"
+        rename_cols[col] = new_col_name
+        car_standings_data = car_standings_data.rename(columns=rename_cols)
+
+    standings_data = standings_data.merge(car_standings_data, on='driver_name')
+    standings_data['season_year'] = current_season
+    standings_data['race_number'] = race_number
+    return standings_data.to_dict(orient='records')
 
 def compose_playoff_standings_data(raw_data: dict, current_round: str, current_season: str) -> dict:
     current_race = int(current_round)
