@@ -1,7 +1,7 @@
 import pandas as pd
 from datetime import datetime
 
-seasons = [2022, 2023, 2024, 2025]
+seasons = [2024, 2025]
 
 
 class FeatureProcessor:
