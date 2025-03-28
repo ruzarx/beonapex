@@ -60,7 +60,7 @@ const App = () => {
         {/* Render NASCAR Sub-Menu Content */}
         <div className="max-w-4xl mx-auto mt-4">
           {selectedNascarTab === "Fantasy" && <MainFantasyScreen />}
-          {selectedNascarTab === "Statistics" && <StatisticsScreen />}
+          {selectedNascarTab === "Statistics" && <StatisticsScreen themeMode={themeMode}/>}
           {selectedNascarTab === "Fun" && <Box sx={{ p: 3, bgcolor: "background.paper", borderRadius: 2, boxShadow: 1 }}>
             <h2>Fun Section</h2>
             <p>Coming soon...</p>

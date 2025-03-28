@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Box, Typography, Tabs, Tab } from "@mui/material";
 import StandingsPage from "../stats/StandingsPage";
 
-const StatisticsScreen = () => {
+const StatisticsScreen = ( themeMode ) => {
   const [selectedTab, setSelectedTab] = useState("standings");
 
   const handleTabChange = (event, newValue) => {
@@ -21,7 +21,7 @@ const StatisticsScreen = () => {
 
       {/* Render selected tab content */}
       <Box sx={{ mt: 3 }}>
-        {selectedTab === "standings" && <StandingsPage/>}
+        {selectedTab === "standings" && <StandingsPage themeMode={themeMode}/>}
         {selectedTab === "drivers" && (
           <Typography variant="body1">Driver standings and statistics will be displayed here.</Typography>
         )}

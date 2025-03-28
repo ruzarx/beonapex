@@ -126,7 +126,6 @@ def standings_calculation(raw_data: pd.DataFrame, current_race: int, season: int
             for driver in playoff_8_drivers:
                 if driver not in playoff_4_drivers:
                     season_points[driver] = pure_season_points[driver]
-                print(driver, season_points[driver])
             for driver in race_data['driver_name'].unique():
                 if driver in playoff_4_drivers:
                     season_points[driver] += race_data[race_data['driver_name'] == driver]['race_finish_points'].values[0]

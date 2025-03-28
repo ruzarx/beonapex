@@ -17,7 +17,7 @@ class DataProcessor:
         with open('data/last_race_data.json', 'w') as file:
             json.dump(last_race_data, file)
         standings = pd.DataFrame()
-        for season_year in range(2025, int(last_race_data['last_race_season']) + 1):
+        for season_year in range(2024, int(last_race_data['last_race_season']) + 1):
             season_standings = pd.DataFrame()
             for race_number in range(1, 37):
                 if (season_year == int(last_race_data['last_race_season'])) & (race_number > int(last_race_data['last_race_number'])):
@@ -64,10 +64,10 @@ class DataProcessor:
                         "race_pos": result[1]['race_pos'],
                      }
             raw_standings_data.append(current_row)
-        season_standings_data = data_processing.compose_season_standings_data(raw_standings_data,
-                                                                              race_number,
-                                                                              season_year)
-        return season_standings_data
+        season_standings_data = data_processing.compose_playoff_standings_data(raw_standings_data,
+                                                                                race_number,
+                                                                                season_year)
+        return season_standings_data.to_dict(orient='records')
     
     def make_fantasy_groups(self, standings: pd.DataFrame) -> pd.DataFrame:
         standings = standings[standings['driver_name'].isin(drivers_2025)].reset_index(drop=True)
