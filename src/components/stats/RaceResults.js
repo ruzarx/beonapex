@@ -101,7 +101,7 @@ import {
                   onClick={() => onDriverClick(result.driver_name)}
                 >
                   <TableCell sx={cellStyle}>{result.race_pos}</TableCell>
-                  <TableCell sx={cellStyle}>{result.driver_name}</TableCell>
+                  <TableCell sx={{ px: 1, py: 0.5, fontWeight: "bold" }}>{result.driver_name}</TableCell>
                   <TableCell sx={cellStyle}>{result.car_number}</TableCell>
                   <TableCell sx={cellStyle}>
                     <Typography
@@ -109,7 +109,8 @@ import {
                         sx={{
                             fontSize: "clamp(0.7rem, 1vw, 0.95rem)", // scale down based on width
                             textOverflow: "ellipsis",
-                            overflow: "hidden"
+                            overflow: "hidden",
+                            textAlign: "left",
                         }}
                         >
                         {result.team_name}
