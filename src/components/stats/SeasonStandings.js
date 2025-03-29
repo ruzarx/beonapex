@@ -12,7 +12,7 @@ import Filter3Icon from '@mui/icons-material/Filter3';
 import MilitaryTechIcon from '@mui/icons-material/MilitaryTech';
 
 const SeasonStandings = ({ seasonYear, currentRace, themeMode, onDriverClick }) => {
-  const isDark = themeMode?.themeMode?.themeMode === "dark";
+  const isDark = themeMode["themeMode"] === "dark";
 
   const standingsData = rawStandingsData.filter(r => r.season_year === seasonYear);
   const allDrivers = [...new Set(
@@ -44,7 +44,7 @@ const SeasonStandings = ({ seasonYear, currentRace, themeMode, onDriverClick }) 
 
   const getHighlight = (driver, index) => {
     const pos = seasonPosMap[driver];
-    let highlightLimit = 0;
+    let highlightLimit = 20;
   
     if (currentRace >= 27 && currentRace <= 29) highlightLimit = 16;
     else if (currentRace >= 30 && currentRace <= 32) highlightLimit = 12;
@@ -53,8 +53,8 @@ const SeasonStandings = ({ seasonYear, currentRace, themeMode, onDriverClick }) 
   
     if (highlightLimit && pos <= highlightLimit) {
       return applyZebraTint(
-        isDark ? "#2c4530" : "#e8f5e9",
-        isDark ? "#243629" : "#d0e9d6",
+        isDark ? "#1e1e1e" : "#ffffff",
+        isDark ? "#2a2a2a" : "#f9f9f9",
         index
       );
     }

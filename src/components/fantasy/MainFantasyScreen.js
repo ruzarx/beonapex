@@ -12,20 +12,22 @@ import {
   ToggleButtonGroup,
 } from "@mui/material";
 import raceData from "../../data/data.json";
+import entryList from "../../data/entry_list.json";
 import nextRaceData from "../../data/next_race_data.json";
 import trackSimilarity from "../../data/track_similarity.json";
 import OverviewTable from "./OverviewTable";
 import DriverFantasyTable from "./DriverFantasyTable";
 
 const nextRaceTrack = nextRaceData["next_race_track"];
-const groupsOrder = ["I", "I-II", "II", "III", "IV"];
+const groupsOrder = ["I", "I-II", "II", "III", "IV", "All"];
 const currentSeason = 2025;
 const currentRaceNumber = nextRaceData["next_race_number"] - 1;
+const allowedDrivers = entryList[currentSeason.toString()] || [];
 
 const MainFantasyScreen = () => {
   const [useStarGroup, setUseStarGroup] = useState(true);
   const [selectedGroup, setSelectedGroup] = useState("I-II");
-  const [groups, setGroups] = useState(["I-II", "III", "IV"]);
+  const [groups, setGroups] = useState(["I-II", "III", "IV", "All"]);
   const [groupDrivers, setGroupDrivers] = useState([]);
   const [raceDates, setRaceDates] = useState([]);
   const [similarRaceDates, setSimilarRaceDates] = useState([]);
@@ -38,10 +40,13 @@ const MainFantasyScreen = () => {
     const groupType = useStarGroup ? "star_group" : "open_group";
     const extractedGroups = [
       ...new Set(raceData.map((entry) => entry[groupType])),
-    ].filter(Boolean);
-    extractedGroups.sort(
-      (a, b) => groupsOrder.indexOf(a) - groupsOrder.indexOf(b)
-    );
+    ]
+      .filter(Boolean)
+      .sort((a, b) => groupsOrder.indexOf(a) - groupsOrder.indexOf(b))
+      .filter((g) => g !== "All");
+    
+    extractedGroups.push("All");
+    
     setGroups(extractedGroups);
     setSelectedGroup(useStarGroup ? "I" : "I-II"); // Reset selection when switching modes
   }, [useStarGroup]);
@@ -102,13 +107,18 @@ const MainFantasyScreen = () => {
         ...new Set(allPastSeasonRaces.map((race) => race.race_date)),
       ]);
 
-      const allGroupDrivers = [
-        ...new Set(
+      const allGroupDrivers = selectedGroup === "All"
+      ? [...new Set(
+          raceData
+            .map((entry) => entry.driver_name)
+            .filter((name) => allowedDrivers.includes(name))
+        )]
+      : [...new Set(
           raceData
             .filter((entry) => entry[groupType] === selectedGroup)
             .map((entry) => entry.driver_name)
-        ),
-      ];
+            .filter((name) => allowedDrivers.includes(name))
+        )];
       setGroupDrivers(allGroupDrivers);
     }
   }, [selectedGroup, useStarGroup]);

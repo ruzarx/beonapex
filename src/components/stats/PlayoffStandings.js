@@ -6,7 +6,7 @@ import {
   import { getStandings, getBestFinish, getRoundWins } from "../../utils/standingsCalculations";
   
   const PlayoffStandings = ({ seasonYear, currentRace, themeMode, onDriverClick }) => {
-    const isDark = themeMode["themeMode"]["themeMode"] === "dark";
+    const isDark = themeMode["themeMode"] === "dark";
     const standingsData = rawStandingsData.filter(r => r.season_year === seasonYear);
     const allDrivers = [...new Set(
       standingsData.filter(r => r.race_number <= currentRace).map(r => r.driver_name)
@@ -79,57 +79,57 @@ import {
               null;
   
   
-    const applyZebraTint = (colorEven, colorOdd, index) =>
-      index % 2 === 0 ? colorEven : colorOdd;
-  
-  
-    const getHighlight = (driver, index) => {
-      const row = currentSeasonStandingsData.find(r => r.driver_name === driver);
-      const pos = playoffPosMap[driver];
-  
-      if (!row) return index % 2 === 0 ? "background.default" : "action.hover";
-  
-      // Champion
-      if (row?.champion === 1) {
-        return applyZebraTint(
-          isDark ? "#294842" : "#b2dfdb",
-          isDark ? "#243b36" : "#a5d6d5",
-          index
-        );
-      }
-  
-      const isLockedIn = row?.[`qualified_to_${bubbleCutoff}`] === 1 && row.wins > 0;
-  
-      // Locked-in
-      if (isLockedIn) {
-        return applyZebraTint(
-          isDark ? "#4e342e" : "#ffe0b2",
-          isDark ? "#3e2723" : "#ffd180",
-          index
-        );
-      }
-  
-      // Promoted
-      if (pos <= bubbleCutoff) {
-        return applyZebraTint(
-          isDark ? "#355635" : "#dcedc8",
-          isDark ? "#2a4430" : "#c8e6c9",
-          index
-        );
-      }
-  
-      // Just out
-      if (pos <= bubbleCutoff + 4) {
-        return applyZebraTint(
-          isDark ? "#5d2e35" : "#f8bbd0",
-          isDark ? "#4a2027" : "#f48fb1",
-          index
-        );
-      }
-  
-      // Default zebra
-      return index % 2 === 0 ? "background.default" : "action.hover";
-    };
+              const applyZebraTint = (colorEven, colorOdd, index) =>
+                index % 2 === 0 ? colorEven : colorOdd;
+            
+            
+              const getHighlight = (driver, index) => {
+                const row = currentSeasonStandingsData.find(r => r.driver_name === driver);
+                const pos = playoffPosMap[driver];
+            
+                if (!row) return index % 2 === 0 ? "background.default" : "action.hover";
+            
+                // Champion
+                if (row?.champion === 1) {
+                  return applyZebraTint(
+                    isDark ? "#294842" : "#b2dfdb",
+                    isDark ? "#243b36" : "#a5d6d5",
+                    index
+                  );
+                }
+            
+                const isLockedIn = row?.[`qualified_to_${bubbleCutoff}`] === 1 && row.wins > 0;
+            
+                // Locked-in
+                if (isLockedIn) {
+                  return applyZebraTint(
+                    isDark ? "#4e342e" : "#ffe0b2",
+                    isDark ? "#3e2723" : "#ffd180",
+                    index
+                  );
+                }
+            
+                // Promoted
+                if (pos <= bubbleCutoff) {
+                  return applyZebraTint(
+                    isDark ? "#355635" : "#dcedc8",
+                    isDark ? "#2a4430" : "#c8e6c9",
+                    index
+                  );
+                }
+            
+                // Just out
+                if (pos <= bubbleCutoff + 4) {
+                  return applyZebraTint(
+                    isDark ? "#5d2e35" : "#f8bbd0",
+                    isDark ? "#4a2027" : "#f48fb1",
+                    index
+                  );
+                }
+            
+                // Default zebra
+                return index % 2 === 0 ? "background.default" : "action.hover";
+              };
   
     const getPlayoffPointsDelta = (driver) => {
       const row = currentSeasonStandingsData.find(r => r.driver_name === driver);
