@@ -238,9 +238,10 @@ def scrap_race(season: int, race_number: int) -> bool:
             logging.error(f"Error extracting or saving playoff standings info: {e}")
 
     finally:
-        # driver.quit()
+        driver.quit()
         logging.info("Driver quit successfully")
 
+    driver = webdriver.Chrome(options=options)
     try:
         driver.get(url_loop)
         page_source = driver.page_source
