@@ -95,70 +95,59 @@ const OverviewTable = ({ groupDrivers, raceDates, pastSeasonDates, currentSeason
 
             {/* Sub-Headers */}
             <TableRow sx={{ bgcolor: "primary.light", position: "sticky", top: 53, zIndex: 1 }}>
-                <Tooltip title={`Average finish position`}>
-                <TableCell sx={{ fontWeight: "bold", textAlign: "center" }}>
-                  Finish Position
-                </TableCell>
-              </Tooltip>
-              <Tooltip title={`Average qualification position`}>
-                <TableCell sx={{ fontWeight: "bold", textAlign: "center" }}>
-                  Start Position
-                </TableCell>
-              </Tooltip>
-              <Tooltip title={`Average race rating`}>
-                <TableCell sx={{ fontWeight: "bold", textAlign: "center" }}>
-                  Race Rating
-                </TableCell>
-              </Tooltip>
-              <Tooltip title={`Average fantasy points earned`}>
-                <TableCell sx={{ fontWeight: "bold", textAlign: "center" }}>
-                  Fantasy Points
-                </TableCell>
-              </Tooltip>
+              {[
+                ["Finish Position", "Average finish position"],
+                ["Start Position", "Average qualification position"], 
+                ["Race Rating", "Average race rating"],
+                ["Fantasy Points", "Average fantasy points earned"]
+              ].map(([label, tooltip]) => (
+                <Tooltip key={label} title={tooltip}>
+                  <TableCell sx={{ fontWeight: "bold", textAlign: "center" }}>
+                    {label}
+                  </TableCell>
+                </Tooltip>
+              ))}
             </TableRow>
           </TableHead>
 
           {/* Body */}
           <TableBody>
-            {sortedDrivers.map((driver, index) => (
-              <TableRow
-                key={index}
-                sx={{
-                  bgcolor: index % 2 === 0 ? "background.default" : "action.hover",
-                  "&:hover": { bgcolor: "action.selected", transition: "all 0.3s ease" },
-                }}
-              >
-                <TableCell sx={{ width: "40px", fontWeight: "bold", px: 2, cursor: "pointer" }}>
+            {sortedDrivers.map((driver, index) => {
+              const cellProps = {textAlign: "center"};
+              const stats = [
+                ["race_pos", "Average finish position"],
+                ["quali_pos", "Average qualification position"],
+                ["fantasy_points", "Average race rating"], 
+                ["driver_rating", "Average fantasy points earned"]
+              ];
+              
+              return (
+                <TableRow
+                  key={index}
+                  sx={{
+                    bgcolor: index % 2 === 0 ? "background.default" : "action.hover",
+                    "&:hover": { bgcolor: "action.selected", transition: "all 0.3s ease" },
+                  }}
+                >
+                  <TableCell sx={{ width: "40px", fontWeight: "bold", px: 2, cursor: "pointer" }}>
                     {driverCarNumbers[driver] || "-"}
-                </TableCell>
-                <TableCell 
+                  </TableCell>
+                  <TableCell 
                     sx={{ fontWeight: "bold", px: 2, cursor: "pointer" }}
                     onClick={() => handleDriverClick(driver)}
                   >
                     {driver}
-                </TableCell>
-                <Tooltip title={`Average finish position`}>
-                  <TableCell sx={{ textAlign: "center" }}>
-                    {getAverageFeatureValue(raceData, driver, raceDates, excludePlayoffs, excludeDnf, "race_pos")}
                   </TableCell>
-                </Tooltip>
-                <Tooltip title={`Average qualification position`}>
-                  <TableCell sx={{ textAlign: "center" }}>
-                    {getAverageFeatureValue(raceData, driver, raceDates, excludePlayoffs, excludeDnf, "quali_pos")}
-                  </TableCell>
-                </Tooltip>
-                <Tooltip title={`Average race rating`}>
-                  <TableCell sx={{ textAlign: "center" }}>
-                    {getAverageFeatureValue(raceData, driver, raceDates, excludePlayoffs, excludeDnf, "fantasy_points")}
-                  </TableCell>
-                </Tooltip>
-                <Tooltip title={`Average fantasy points earned`}>
-                  <TableCell sx={{ textAlign: "center" }}>
-                    {getAverageFeatureValue(raceData, driver, raceDates, excludePlayoffs, excludeDnf, "driver_rating")}
-                  </TableCell>
-                </Tooltip>
-              </TableRow>
-            ))}
+                  {stats.map(([field, tooltip]) => (
+                    <Tooltip key={field} title={tooltip}>
+                      <TableCell sx={cellProps}>
+                        {getAverageFeatureValue(raceData, driver, raceDates, excludePlayoffs, excludeDnf, field)}
+                      </TableCell>
+                    </Tooltip>
+                  ))}
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
       </TableContainer>

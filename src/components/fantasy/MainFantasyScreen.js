@@ -10,6 +10,10 @@ import {
   RadioGroup,
   ToggleButton,
   ToggleButtonGroup,
+  ButtonGroup,
+  Button,
+  Divider,
+  Typography
 } from "@mui/material";
 import raceData from "../../data/data.json";
 import entryList from "../../data/entry_list.json";
@@ -17,12 +21,26 @@ import nextRaceData from "../../data/next_race_data.json";
 import trackSimilarity from "../../data/track_similarity.json";
 import OverviewTable from "./OverviewTable";
 import DriverFantasyTable from "./DriverFantasyTable";
+import GroupSelector from "./GroupSelector";
 
 const nextRaceTrack = nextRaceData["next_race_track"];
 const groupsOrder = ["I", "I-II", "II", "III", "IV", "All"];
 const currentSeason = 2025;
 const currentRaceNumber = nextRaceData["next_race_number"] - 1;
 const allowedDrivers = entryList[currentSeason.toString()] || [];
+
+// Move these outside the component as they don't need to be recreated on each render
+const getTrackRaces = (minYear = 2022) => 
+  raceData
+    .filter(entry => entry.track_name === nextRaceTrack && entry.season_year >= minYear)
+    .map(entry => entry.race_date);
+
+const getSimilarTrackRaces = (minYear = 2022) => {
+  const similarTracks = trackSimilarity[nextRaceTrack] || [];
+  return raceData
+    .filter(entry => similarTracks.includes(entry.track_name) && entry.season_year >= minYear)
+    .map(entry => entry.race_date);
+};
 
 const MainFantasyScreen = () => {
   const [useStarGroup, setUseStarGroup] = useState(true);
@@ -38,131 +56,68 @@ const MainFantasyScreen = () => {
 
   useEffect(() => {
     const groupType = useStarGroup ? "star_group" : "open_group";
-    const extractedGroups = [
-      ...new Set(raceData.map((entry) => entry[groupType])),
-    ]
-      .filter(Boolean)
-      .sort((a, b) => groupsOrder.indexOf(a) - groupsOrder.indexOf(b))
-      .filter((g) => g !== "All");
+    const extractedGroups = Array.from(new Set(
+      raceData
+        .map(entry => entry[groupType])
+        .filter(Boolean)
+    ))
+    .sort((a, b) => groupsOrder.indexOf(a) - groupsOrder.indexOf(b))
+    .filter(g => g !== "All");
     
     extractedGroups.push("All");
     
     setGroups(extractedGroups);
-    setSelectedGroup(useStarGroup ? "I" : "I-II"); // Reset selection when switching modes
+    setSelectedGroup(useStarGroup ? "I" : "I-II");
   }, [useStarGroup]);
 
   useEffect(() => {
-    if (selectedGroup) {
-      const groupType = useStarGroup ? "star_group" : "open_group";
+    if (!selectedGroup) return;
 
-      const trackRaces = raceData
-        .filter(
-          (entry) =>
-            entry.track_name === nextRaceTrack && entry.season_year >= 2022
-        )
-        .map((entry) => ({
-          season: entry.season_year,
-          race_date: entry.race_date,
-        }));
-      trackRaces.sort((a, b) => new Date(b.race_date) - new Date(a.race_date));
-      setRaceDates([...new Set(trackRaces.map((race) => race.race_date))]);
+    const groupType = useStarGroup ? "star_group" : "open_group";
 
-      const similarRaces = raceData
-        .filter((entry) => {
-          const similarTracks = trackSimilarity[nextRaceTrack] || [];
-          if (!Array.isArray(similarTracks)) return false;
-          return (
-            similarTracks.includes(entry.track_name) &&
-            entry.season_year >= 2022
-          );
-        })
-        .map((entry) => ({
-          season: entry.season_year,
-          race_date: entry.race_date,
-        }));
+    // Use memoized helper functions
+    setRaceDates([...new Set(getTrackRaces())]);
+    setSimilarRaceDates([...new Set(getSimilarTrackRaces())]);
+    
+    // Simplified date filtering
+    const allRaceDates = raceData
+      .filter(entry => entry.season_year >= 2022)
+      .map(entry => entry.race_date);
+    setAllRaceDates([...new Set(allRaceDates)]);
 
-      setSimilarRaceDates([
-        ...new Set(similarRaces.map((race) => race.race_date)),
-      ]);
+    const currentSeasonRaces = raceData
+      .filter(entry => entry.season_year === currentSeason)
+      .map(entry => entry.race_date);
+    setCurrentSeasonDates([...new Set(currentSeasonRaces)]);
 
-      const allRaces = raceData
-        .filter((entry) => entry.season_year >= 2022)
-        .map((entry) => ({
-          season: entry.season_year,
-          race_date: entry.race_date,
-        }));
-      setAllRaceDates([...new Set(allRaces.map((race) => race.race_date))]);
+    const pastSeasonRaces = raceData
+      .filter(entry => 
+        entry.season_year === currentSeason - 1 && 
+        entry.race_number <= currentRaceNumber
+      )
+      .map(entry => entry.race_date);
+    setPastSeasonDates([...new Set(pastSeasonRaces)]);
 
-      const allSeasonRaces = raceData
-        .filter((entry) => entry.season_year === currentSeason)
-        .map((entry) => ({ race_date: entry.race_date }));
-      setCurrentSeasonDates([
-        ...new Set(allSeasonRaces.map((race) => race.race_date)),
-      ]);
-
-      const allPastSeasonRaces = raceData
-        .filter((entry) => entry.season_year === currentSeason - 1 && entry.race_number <= currentRaceNumber) // ✅ Properly closed
-        .map((entry) => ({ race_date: entry.race_date }));
-      setPastSeasonDates([
-        ...new Set(allPastSeasonRaces.map((race) => race.race_date)),
-      ]);
-
-      const allGroupDrivers = selectedGroup === "All"
-      ? [...new Set(
-          raceData
-            .map((entry) => entry.driver_name)
-            .filter((name) => allowedDrivers.includes(name))
-        )]
-      : [...new Set(
-          raceData
-            .filter((entry) => entry[groupType] === selectedGroup)
-            .map((entry) => entry.driver_name)
-            .filter((name) => allowedDrivers.includes(name))
-        )];
-      setGroupDrivers(allGroupDrivers);
-    }
+    // Simplified driver filtering
+    const drivers = raceData
+      .filter(entry => selectedGroup === "All" || entry[groupType] === selectedGroup)
+      .map(entry => entry.driver_name)
+      .filter(name => allowedDrivers.includes(name));
+    
+    setGroupDrivers([...new Set(drivers)]);
   }, [selectedGroup, useStarGroup]);
 
   return (
     <Container sx={{ textAlign: "center", mt: 4 }}>
       <h2>{nextRaceTrack}</h2>
 
-      <Box sx={{ mt: 2 }}>
-        <FormControl component="fieldset" sx={{ mb: 2 }}>
-          <RadioGroup
-            row
-            value={useStarGroup ? "star" : "open"}
-            onChange={(event) => setUseStarGroup(event.target.value === "star")}
-          >
-            <FormControlLabel
-              value="star"
-              control={<Radio />}
-              label="Star Groups"
-            />
-            <FormControlLabel
-              value="open"
-              control={<Radio />}
-              label="Open Groups"
-            />
-          </RadioGroup>
-        </FormControl>
-
-        {/* Group Selector */}
-        <Select
-          value={selectedGroup}
-          onChange={(e) => setSelectedGroup(e.target.value)}
-          displayEmpty
-          sx={{ mb: 2, minWidth: 200 }}
-        >
-          <MenuItem value="">
-            Select a {useStarGroup ? "Star" : "Open"} Group
-          </MenuItem>
-          {groups.map((group, index) => (
-            <MenuItem key={index} value={group}>
-              {group}
-            </MenuItem>
-          ))}
-        </Select>
+      <Box sx={{ mt: 2, mb: 3 }}>
+        <GroupSelector 
+          onGroupSelect={(group, isStar) => {
+            setSelectedGroup(group);
+            setUseStarGroup(isStar);
+          }} 
+        />
       </Box>
 
       <Box sx={{ display: "flex", justifyContent: "center", mb: 2 }}>
