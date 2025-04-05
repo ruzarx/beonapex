@@ -11,6 +11,7 @@ import StandingsPage from "./StandingsPage";
 import RaceResults from "./RaceResults";
 import StandingsDriverDrawer from "./StandingsDriverDrawer";
 import ResultsDriverDrawer from "./ResultsDrawer";
+import DetailedStats from "../detailed_stats/DetailedStats";
 
 
 const drawerWidth = 240;
@@ -103,7 +104,7 @@ const StatisticsScreen = (themeMode) => {
         <Tabs value={selectedTab} onChange={handleTabChange} centered>
           <Tab label="Standings" value="standings" />
           <Tab label="Results" value="results" />
-          <Tab label="Stats" value="drivers" />
+          <Tab label="Stats" value="stats" />
           <Tab label="Track" value="tracks" />
         </Tabs>
 
@@ -158,6 +159,14 @@ const StatisticsScreen = (themeMode) => {
           )}
           {selectedTab === "results" && (
             <RaceResults
+              seasonYear={seasonYear}
+              currentRace={currentRace}
+              themeMode={themeMode}
+              onDriverClick={handleDriverClick}
+            />
+          )}
+          {selectedTab === "stats" && (
+            <DetailedStats
               seasonYear={seasonYear}
               currentRace={currentRace}
               themeMode={themeMode}
