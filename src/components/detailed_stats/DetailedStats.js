@@ -1,23 +1,56 @@
 import React, { useState } from "react";
 import {
     Paper, Box, Typography,
-    ToggleButtonGroup, ToggleButton, FormControl, InputLabel, Select, MenuItem
+    ToggleButtonGroup, ToggleButton, FormControl, InputLabel, Select, MenuItem, ListSubheader
   } from "@mui/material";
 import rawData from "../../data/data.json";
+import trackTypes from "../../data/track_types.json";
 import OverviewStatTable from "./OverviewStatTable";
 import PointsStatTable from "./PointsStatTable";
 import PositionStatTable from "./PositionStatTable";
 import FightStatTable from "./FightStatTable";
 
 
-const DetailedStats = ({ seasonYear, currentRace, themeMode, onDriverClick }) => {
+const DetailedStats = ({ seasonYear, showAllYears, themeMode, onDriverClick }) => {
     const [tableMode, setTableMode] = useState("overview"); // options: points, positions, fight
     const [statsLevel, setStatsLevel] = useState("driver"); // options: driver, team, manufacturer
+    const [trackFilter, setTrackFilter] = useState("all"); // New state for track filter
 
     const isDark = themeMode["themeMode"] === "dark";
-    const raceData = rawData.filter(r => (r.season_year === seasonYear) && (r.race_number <= currentRace));
-    const prevSeasonData = rawData.filter(r => (r.season_year === seasonYear - 1) && (r.race_number <= currentRace));
-    const lastRaceData = raceData.filter(r => r.race_number === currentRace);
+
+    // Helper function to filter data based on track type
+    const filterDataByTrack = (data) => {
+        if (trackFilter === "all") return data;
+        
+        if (trackFilter.startsWith("type_")) {
+            // Filter by track type from track types
+            const trackType = trackFilter.replace("type_", "");
+            const tracksInType = trackTypes[trackType] || [];
+            return data.filter(r => tracksInType.includes(r.track_name));
+        }
+        
+        // Filter by specific track
+        return data.filter(r => r.track_name === trackFilter);
+    };
+
+    // Filter data based on year selection
+    const filteredData = showAllYears 
+        ? rawData 
+        : rawData.filter(r => r.season_year === seasonYear);
+
+    // Apply track filter to all data
+    const raceData = filterDataByTrack(filteredData);
+    const prevSeasonData = showAllYears 
+        ? [] 
+        : filterDataByTrack(rawData.filter(r => r.season_year === seasonYear - 1));
+    const lastRaceData = showAllYears 
+        ? [] 
+        : filterDataByTrack(rawData.filter(r => r.season_year === seasonYear));
+
+    // Get unique tracks from the data
+    const uniqueTracks = [...new Set(rawData.map(r => r.track_name))];
+    // Get track types entries
+    const trackTypeEntries = Object.entries(trackTypes);
 
     return (
         <Paper sx={{ borderRadius: 3, p: 3, boxShadow: 3 }}>
@@ -38,19 +71,45 @@ const DetailedStats = ({ seasonYear, currentRace, themeMode, onDriverClick }) =>
                 </ToggleButtonGroup>
             </Box>
 
-            <FormControl size="small" sx={{ minWidth: 160 }}>
-                <InputLabel id="stats-level-label">Stats Type</InputLabel>
-                <Select
-                labelId="stats-level-label"
-                value={statsLevel}
-                label="Stats Type"
-                onChange={(e) => setStatsLevel(e.target.value)}
-                >
-                <MenuItem value="driver">Driver</MenuItem>
-                <MenuItem value="team">Team</MenuItem>
-                <MenuItem value="manufacturer">Manufacturer</MenuItem>
-                </Select>
-            </FormControl>
+            <Box display="flex" gap={2}>
+                <FormControl size="small" sx={{ minWidth: 160 }}>
+                    <InputLabel id="track-filter-label">Track Filter</InputLabel>
+                    <Select
+                        labelId="track-filter-label"
+                        value={trackFilter}
+                        label="Track Filter"
+                        onChange={(e) => setTrackFilter(e.target.value)}
+                    >
+                        <MenuItem value="all">All Tracks</MenuItem>
+                        <ListSubheader>Track Types</ListSubheader>
+                        {trackTypeEntries.map(([type, tracks]) => (
+                            <MenuItem key={`type_${type}`} value={`type_${type}`}>
+                                {type}
+                            </MenuItem>
+                        ))}
+                        <ListSubheader>Specific Tracks</ListSubheader>
+                        {uniqueTracks.map(track => (
+                            <MenuItem key={track} value={track}>
+                                {track}
+                            </MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
+
+                <FormControl size="small" sx={{ minWidth: 160 }}>
+                    <InputLabel id="stats-level-label">Stats Type</InputLabel>
+                    <Select
+                    labelId="stats-level-label"
+                    value={statsLevel}
+                    label="Stats Type"
+                    onChange={(e) => setStatsLevel(e.target.value)}
+                    >
+                    <MenuItem value="driver">Driver</MenuItem>
+                    <MenuItem value="team">Team</MenuItem>
+                    <MenuItem value="manufacturer">Manufacturer</MenuItem>
+                    </Select>
+                </FormControl>
+            </Box>
             </Box>
 
     
@@ -80,7 +139,8 @@ const DetailedStats = ({ seasonYear, currentRace, themeMode, onDriverClick }) =>
                     raceData={raceData}
                     seasonYear={seasonYear}
                     prevSeasonData={prevSeasonData}
-                    isDark={isDark}  
+                    isDark={isDark}
+                    showAllYears={showAllYears}
                 />                 
             }
             { tableMode === "fight" &&
@@ -90,7 +150,8 @@ const DetailedStats = ({ seasonYear, currentRace, themeMode, onDriverClick }) =>
                     raceData={raceData}
                     seasonYear={seasonYear}
                     prevSeasonData={prevSeasonData}
-                    isDark={isDark}  
+                    isDark={isDark}
+                    showAllYears={showAllYears}
                 />                 
             }
             </Paper>

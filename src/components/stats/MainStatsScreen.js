@@ -19,6 +19,8 @@ const collapsedWidth = 64;
 
 const StatisticsScreen = (themeMode) => {
   const [selectedTab, setSelectedTab] = useState("standings");
+  const [seasonYear, setSeasonYear] = useState(2024); // Default to 2024
+  const [showAllYears, setShowAllYears] = useState(false); // New state for showing all years
 
   const allSeasons = Array.from(new Set(racesData.map(r => r.season_year))).sort();
 
@@ -35,7 +37,6 @@ const StatisticsScreen = (themeMode) => {
   const initialRaceNumber = getLatestRaceNumber(initialSeasonYear);
 
   const [currentRace, setCurrentRace] = useState(initialRaceNumber);
-  const [seasonYear, setSeasonYear] = useState(initialSeasonYear);
   const [raceSelectorOpen, setRaceSelectorOpen] = useState(false);
   const [driverDrawerOpen, setDriverDrawerOpen] = useState(false);
 
@@ -83,20 +84,24 @@ const StatisticsScreen = (themeMode) => {
 
   return (
     <Box sx={{ display: "flex" }}>
-      {/* Shared Race Selector */}
-      <RaceSelector
-        races={filteredRaces}
-        currentRace={currentRace}
-        onSelect={handleRaceSelect}
-        open={raceSelectorOpen}
-        onToggle={() => setRaceSelectorOpen((prev) => !prev)}
-      />
+      {/* Only show RaceSelector for standings and results tabs */}
+      {(selectedTab === "standings" || selectedTab === "results") && (
+        <RaceSelector
+          races={filteredRaces}
+          currentRace={currentRace}
+          onSelect={handleRaceSelect}
+          open={raceSelectorOpen}
+          onToggle={() => setRaceSelectorOpen((prev) => !prev)}
+        />
+      )}
 
       <Box
         component="main"
         sx={{
           flexGrow: 1,
-          marginLeft: raceSelectorOpen ? `${drawerWidth}px` : `${collapsedWidth}px`,
+          marginLeft: (selectedTab === "standings" || selectedTab === "results") && raceSelectorOpen 
+            ? `${drawerWidth}px` 
+            : `${collapsedWidth}px`,
           transition: "margin 0.3s ease",
           padding: 2,
         }}
@@ -118,34 +123,55 @@ const StatisticsScreen = (themeMode) => {
             gap: 2
           }}
         >
-          <ToggleButtonGroup
-            color="primary"
-            value={seasonYear}
-            exclusive
-            onChange={(e, newSeason) => {
-              if (newSeason !== null) {
-                setSeasonYear(newSeason);
-                setCurrentRace(getLatestRaceNumber(newSeason));
-              }
-            }}
-          >
-            {[2024, 2025].map((year) => (
-              <ToggleButton key={year} value={year}>
-                {year}
-              </ToggleButton>
-            ))}
-          </ToggleButtonGroup>
+          {selectedTab === "stats" ? (
+            <ToggleButtonGroup
+              color="primary"
+              value={showAllYears ? "all" : seasonYear}
+              exclusive
+              onChange={(e, newValue) => {
+                if (newValue !== null) {
+                  if (newValue === "all") {
+                    setShowAllYears(true);
+                    setSeasonYear(null);
+                  } else {
+                    setShowAllYears(false);
+                    setSeasonYear(parseInt(newValue));
+                  }
+                }
+              }}
+            >
+              <ToggleButton value="all">All Years</ToggleButton>
+              <ToggleButton value={2024}>2024</ToggleButton>
+              <ToggleButton value={2025}>2025</ToggleButton>
+            </ToggleButtonGroup>
+          ) : (
+            <ToggleButtonGroup
+              color="primary"
+              value={seasonYear}
+              exclusive
+              onChange={(e, newSeason) => {
+                if (newSeason !== null) {
+                  setSeasonYear(newSeason);
+                  setCurrentRace(getLatestRaceNumber(newSeason));
+                }
+              }}
+            >
+              <ToggleButton value={2024}>2024</ToggleButton>
+              <ToggleButton value={2025}>2025</ToggleButton>
+            </ToggleButtonGroup>
+          )}
 
-          <Chip
-            label={raceChipLabel}
-            color="info"
-            variant="outlined"
-            sx={{ fontWeight: "bold", fontSize: "0.9rem" }}
-            size="medium"
-          />
+          {/* Only show race chip for standings and results */}
+          {(selectedTab === "standings" || selectedTab === "results") && (
+            <Chip
+              label={raceChipLabel}
+              color="info"
+              variant="outlined"
+              sx={{ fontWeight: "bold", fontSize: "0.9rem" }}
+              size="medium"
+            />
+          )}
         </Box>
-
-
 
         <Box sx={{ mt: 3 }}>
           {selectedTab === "standings" && (
@@ -168,7 +194,7 @@ const StatisticsScreen = (themeMode) => {
           {selectedTab === "stats" && (
             <DetailedStats
               seasonYear={seasonYear}
-              currentRace={currentRace}
+              showAllYears={showAllYears}
               themeMode={themeMode}
               onDriverClick={handleDriverClick}
             />

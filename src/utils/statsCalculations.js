@@ -77,15 +77,19 @@ export const getStagePointsPercentage = (data, entity, racerType) => {
 export const getEntities = (raceData, entityType, seasonYear, sortColumn, isAsc) => {
     let entities;
     if (entityType === "driver") {
-        entities = [...new Set(raceData.filter(r => (entryList[seasonYear].includes(r.driver_name))).map(r => r.driver_name))];
+        if (seasonYear && entryList[seasonYear]) {
+            entities = [...new Set(raceData.filter(r => (entryList[seasonYear].includes(r.driver_name))).map(r => r.driver_name))];
+        } else {
+            entities = [...new Set(raceData.map(r => r.driver_name))];
+        }
     } else if (entityType === "team") {
         entities = [...new Set(raceData.map(r => r.team_name).filter(name => name.toLowerCase() !== "unknown"))];
     } else {
         entities = [...new Set(raceData.map(r => r.manufacturer))];
     }
     return entities.sort((a, b) => {
-      const avgA = getAvgValue(raceData, a, sortColumn, entityType);
-      const avgB = getAvgValue(raceData, b, sortColumn, entityType);
-      return isAsc ? avgA - avgB : avgB - avgA;
+        const avgA = getAvgValue(raceData, a, sortColumn, entityType);
+        const avgB = getAvgValue(raceData, b, sortColumn, entityType);
+        return isAsc ? avgA - avgB : avgB - avgA;
     });
 };
