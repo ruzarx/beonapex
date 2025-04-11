@@ -1,7 +1,8 @@
 import React, { useState, useMemo } from "react";
 import RaceSeriesMenu from "./components/RaceSeriesMenu";
-import MainFantasyScreen from "./components/fantasy/MainFantasyScreen";
-import StatisticsScreen from "./components/stats/MainStatsScreen";
+import FantasyMainScreen from "./components/nascar/fantasy/FantasyMainScreen";
+import StatisticsMainScreen from "./components/nascar/statistics/StatisticsMainScreen";
+import FavoriteDriverDashboard from "./components/nascar/fun/driver_dashboard/FavoriteDriverDashboard";
 import { createTheme, ThemeProvider, CssBaseline, Box, RadioGroup, FormControlLabel, Radio } from "@mui/material";
 
 const App = () => {
@@ -59,12 +60,9 @@ const App = () => {
 
         {/* Render NASCAR Sub-Menu Content */}
         <div className="max-w-4xl mx-auto mt-4">
-          {selectedNascarTab === "Fantasy" && <MainFantasyScreen />}
-          {selectedNascarTab === "Statistics" && <StatisticsScreen themeMode={themeMode}/>}
-          {selectedNascarTab === "Fun" && <Box sx={{ p: 3, bgcolor: "background.paper", borderRadius: 2, boxShadow: 1 }}>
-            <h2>Fun Section</h2>
-            <p>Coming soon...</p>
-          </Box>}
+          {selectedNascarTab === "Fantasy" && <FantasyMainScreen />}
+          {selectedNascarTab === "Statistics" && <StatisticsMainScreen themeMode={themeMode}/>}
+          {selectedNascarTab === "Fun" && <FavoriteDriverDashboard />}
         </div>
       </Box>
     </ThemeProvider>
