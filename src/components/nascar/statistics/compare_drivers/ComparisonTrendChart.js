@@ -1,6 +1,6 @@
 // src/components/driver_comparison/ComparisonTrendChartRecharts.js
 import React, { useState, useMemo, useEffect } from "react";
-import { Box, Chip, Stack, Typography, Grid2 } from "@mui/material";
+import { Box, Chip, Stack, Typography, Grid } from "@mui/material";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 
 const metricGroups = {
@@ -77,8 +77,8 @@ const ComparisonTrendChart = ({ driverAData, driverBData, driverAName, driverBNa
   }, [driverAData, driverBData, currentRaceNumber, seasonA, seasonB, currentSeasonYear, plotType]);
 
   const renderLegend = () => (
-    <Grid2 container spacing={2} sx={{ color: "white", mb: 2 }}>
-      <Grid2 item xs={6}>
+    <Grid container spacing={2} sx={{ color: "white", mb: 2 }}>
+      <Grid item xs={6}>
         <Typography variant="subtitle2" fontWeight="bold">
           {driverAName} - {seasonA}
         </Typography>
@@ -94,8 +94,8 @@ const ComparisonTrendChart = ({ driverAData, driverBData, driverAName, driverBNa
             />
           ))}
         </Stack>
-      </Grid2>
-      <Grid2 item xs={6}>
+      </Grid>
+      <Grid item xs={6}>
         <Typography variant="subtitle2" fontWeight="bold">
           {driverBName} - {seasonB}
         </Typography>
@@ -111,8 +111,8 @@ const ComparisonTrendChart = ({ driverAData, driverBData, driverAName, driverBNa
             />
           ))}
         </Stack>
-      </Grid2>
-    </Grid2>
+      </Grid>
+    </Grid>
   );
 
   return (

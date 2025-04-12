@@ -6,7 +6,7 @@ import {
   IconButton,
   Divider,
   Paper,
-  Grid2,
+  Grid,
   Table,
   TableBody,
   TableCell,
@@ -82,7 +82,7 @@ const FantasyDriverDetailsDrawer = ({ driver, groupDrivers, raceDates, pastSeaso
         <Divider sx={{ mb: 2 }} />
 
         {/* Stats Cards */}
-        <Grid2 container spacing={2}>
+        <Grid container spacing={2}>
           {[
             { title: "This Track", data: [
                 { label: "Avg Finish", value: stats.avgFinish },
@@ -113,7 +113,7 @@ const FantasyDriverDetailsDrawer = ({ driver, groupDrivers, raceDates, pastSeaso
               ] 
             }
           ].map((section, index) => (
-            <Grid2 item xs={3} key={index}>
+            <Grid item xs={3} key={index}>
               <Card elevation={3} sx={{ height: "100%" }}>
                 <CardContent>
                   <Typography variant="h6" fontWeight="bold">{section.title}</Typography>
@@ -124,9 +124,9 @@ const FantasyDriverDetailsDrawer = ({ driver, groupDrivers, raceDates, pastSeaso
                   ))}
                 </CardContent>
               </Card>
-            </Grid2>
+            </Grid>
           ))}
-        </Grid2>
+        </Grid>
 
         <Divider sx={{ my: 3 }} />
 

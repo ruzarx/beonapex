@@ -1,13 +1,16 @@
 // src/components/driver_dashboard/FavoriteDriverDashboard.jsx
 import React from "react";
-import { Box, Grid } from "@mui/material";
+import { Box } from "@mui/material";
+
 import DriverHeaderCard from "./DriverHeaderCard";
 import NextRaceCountdown from "./NextRaceCountdown";
 import RecentFormPanel from "./RecentFormPanel";
+import QualiFormCard from "./QualiFormCard";
 import TrackHistoryTable from "./TrackHistoryTable";
 import QualiRaceStatsCard from "./QualiRaceStatsCard";
 import OvertakesCard from "./OvertakesCard";
 import DriverProspectsText from "./DriverProspectsText";
+import AnimatedCard from "./AnimatedCard";
 
 import nextRaceData from "../../../../data/next_race_data.json";
 import raceData from "../../../../data/data.json";
@@ -38,38 +41,64 @@ const FavoriteDriverDashboard = () => {
   };
 
   return (
-    <Box sx={{ p: 2 }}>
-      <Grid container spacing={2}>
-        {/* Left Column: Driver Info + Recent Form */}
-        <Grid item xs={12} md={8}>
-          <Grid container spacing={2}>
-            <Grid item xs={12} md={6}>
-              <DriverHeaderCard driver={driverSummary} />
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <NextRaceCountdown nextRaceData={nextRaceData} />
-            </Grid>
-            <Grid item xs={12}>
-              <RecentFormPanel />
-            </Grid>
-          </Grid>
-        </Grid>
-  
-        {/* Right Column: Overtakes full-height */}
-        <Grid item xs={12} md={4}>
+    <Box
+      sx={{
+        p: 2,
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+        gap: 2,
+        alignItems: "start",
+      }}
+    >
+      <AnimatedCard delay={0.1}>
+        <Box sx={{ gridColumn: "span 1" }}>
+          <DriverHeaderCard driver={driverSummary} />
+        </Box>
+      </AnimatedCard>
+
+      <AnimatedCard delay={0.2}>
+        <Box sx={{ gridColumn: "span 1" }}>
+          <NextRaceCountdown nextRaceData={nextRaceData} />
+        </Box>
+      </AnimatedCard>
+
+      <AnimatedCard delay={0.3}>
+        <Box sx={{ gridColumn: "span 1" }}>
           <OvertakesCard />
-        </Grid>
-        <Grid item xs={12} md={4}>
+        </Box>
+      </AnimatedCard>
+
+      <AnimatedCard delay={0.4}>
+        <Box sx={{ gridColumn: "span 2" }}>
+          <RecentFormPanel />
+        </Box>
+      </AnimatedCard>
+
+      <AnimatedCard delay={0.5}>
+        <Box sx={{ gridColumn: "span 1" }}>
           <QualiRaceStatsCard />
-        </Grid>
-        <Grid item xs={12} md={4}>
+        </Box>
+      </AnimatedCard>
+
+      <AnimatedCard delay={0.6}>
+        <Box sx={{ gridColumn: "span 1" }}>
           <DriverProspectsText />
-        </Grid>
-        <Grid item xs={12} md={4}><TrackHistoryTable /></Grid>
-      </Grid>
+        </Box>
+      </AnimatedCard>
+
+      <AnimatedCard delay={0.7}>
+        <Box sx={{ gridColumn: "span 3" }}>
+          <TrackHistoryTable />
+        </Box>
+      </AnimatedCard>
+
+      <AnimatedCard delay={0.8}>
+        <Box sx={{ gridColumn: "span 2" }}>
+          <QualiFormCard />
+        </Box>
+      </AnimatedCard>
     </Box>
   );
-  
-};  
+};
 
 export default FavoriteDriverDashboard;

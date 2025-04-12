@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Typography, Tooltip, Grid2, Avatar, Stack } from "@mui/material";
+import { Box, Typography, Tooltip, Grid, Avatar, Stack } from "@mui/material";
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import calendar from "../../../../data/calendar.json";
 
@@ -84,11 +84,11 @@ const DuelTileGrid = ({ driverAData, driverBData, seasonA, seasonB }) => {
         Total Points – {driverAName}: {totalPointsA} | {driverBName}: {totalPointsB} | Diff: {pointDiff >= 0 ? "+" : ""}{pointDiff}
       </Typography>
 
-      <Grid2 container spacing={1} columns={6}>
+      <Grid container spacing={1} columns={6}>
         {raceResults.map((race) => {
           const playoffColor = getPlayoffBorderColor(race.race_number, race.season_year);
           return (
-            <Grid2 item xs={1} key={race.race_number}>
+            <Grid item xs={1} key={race.race_number}>
               <Tooltip
                 title={`Race ${race.race_number}: ${race.track_name}\n${driverAName}: ${race.pointsA} pts, P${race.finishA}\n${driverBName}: ${race.pointsB} pts, P${race.finishB}\nDiff: ${race.delta >= 0 ? "+" : ""}${race.delta}`}
                 arrow
@@ -129,10 +129,10 @@ const DuelTileGrid = ({ driverAData, driverBData, seasonA, seasonB }) => {
                   </Typography>
                 </Box>
               </Tooltip>
-            </Grid2>
+            </Grid>
           );
         })}
-      </Grid2>
+      </Grid>
     </Box>
   );
 };
