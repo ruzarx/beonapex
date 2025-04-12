@@ -1,25 +1,23 @@
-import React, { useState, useMemo } from "react";
 import {
-  TableContainer,
-  Paper,
-  Table,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableBody,
+  Box,
   Checkbox,
   FormControlLabel,
-  Box,
-  Typography,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
   Tooltip,
+  Typography,
 } from "@mui/material";
-import raceData from "../../data/data.json";
-import {
-  getAverageFeatureValue,
-  getFeatureValue,
-  getSeasonLabel,
-} from "../../utils/raceUtils";
+import React, { useMemo, useState } from "react";
+import { loadJsonData } from "../../utils/dataLoader";
+import { getAverageFeatureValue, getFeatureValue, getSeasonLabel } from "../../utils/raceUtils";
 import DriverDetailsDrawer from "./FantasyDriverDetailsDrawer";
+
+const raceData = loadJsonData("data.json");
 
 const DriverFantasyTable = ({
   groupDrivers,
@@ -40,16 +38,30 @@ const DriverFantasyTable = ({
   };
 
   const sortedDrivers = [...groupDrivers].sort((a, b) => {
-    const avgA = getAverageFeatureValue(raceData, a, raceDates, excludePlayoffs, excludeDnf, feature);
-    const avgB = getAverageFeatureValue(raceData, b, raceDates, excludePlayoffs, excludeDnf, feature);
-  
+    const avgA = getAverageFeatureValue(
+      raceData,
+      a,
+      raceDates,
+      excludePlayoffs,
+      excludeDnf,
+      feature
+    );
+    const avgB = getAverageFeatureValue(
+      raceData,
+      b,
+      raceDates,
+      excludePlayoffs,
+      excludeDnf,
+      feature
+    );
+
     const isInvalidA = avgA === "-" || isNaN(avgA);
     const isInvalidB = avgB === "-" || isNaN(avgB);
-  
+
     if (isInvalidA && isInvalidB) return 0; // Keep order if both are "-"
     if (isInvalidA) return 1; // Move A to the end
     if (isInvalidB) return -1; // Move B to the end
-  
+
     if (feature === "race_pos" || feature === "quali_pos") {
       return avgA - avgB; // Lower is better
     } else {
@@ -78,13 +90,20 @@ const DriverFantasyTable = ({
       <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 2 }}>
         <Box sx={{ display: "flex", alignItems: "center", gap: 3 }}>
           <FormControlLabel
-            control={<Checkbox checked={excludePlayoffs} onChange={() => setExcludePlayoffs(!excludePlayoffs)} />}
+            control={
+              <Checkbox
+                checked={excludePlayoffs}
+                onChange={() => setExcludePlayoffs(!excludePlayoffs)}
+              />
+            }
             label="Exclude Playoff Races"
           />
 
           {feature !== "quali_pos" && (
             <FormControlLabel
-              control={<Checkbox checked={excludeDnf} onChange={() => setExcludeDnf(!excludeDnf)} />}
+              control={
+                <Checkbox checked={excludeDnf} onChange={() => setExcludeDnf(!excludeDnf)} />
+              }
               label="Exclude DNFs"
             />
           )}
@@ -108,45 +127,55 @@ const DriverFantasyTable = ({
 
       {/* Table */}
       <TableContainer
-          sx={{
-            maxHeight: 700,
-            borderRadius: 2,
-            overflowY: "auto",
-            scrollbarWidth: "none", // Firefox: hides scrollbar
-            "&::-webkit-scrollbar": {
-              width: 0, // Chrome, Safari: hidden by default
-            },
-            "&:hover::-webkit-scrollbar": {
-              width: "6px", // Appear on hover
-            },
-            "&:hover::-webkit-scrollbar-thumb": {
-              backgroundColor: "#555", // Dark thumb
-              borderRadius: "4px",
-            },
-            "&:hover::-webkit-scrollbar-track": {
-              backgroundColor: "transparent",
-            },
-          }}
-        >
+        sx={{
+          maxHeight: 700,
+          borderRadius: 2,
+          overflowY: "auto",
+          scrollbarWidth: "none", // Firefox: hides scrollbar
+          "&::-webkit-scrollbar": {
+            width: 0, // Chrome, Safari: hidden by default
+          },
+          "&:hover::-webkit-scrollbar": {
+            width: "6px", // Appear on hover
+          },
+          "&:hover::-webkit-scrollbar-thumb": {
+            backgroundColor: "#555", // Dark thumb
+            borderRadius: "4px",
+          },
+          "&:hover::-webkit-scrollbar-track": {
+            backgroundColor: "transparent",
+          },
+        }}
+      >
         <Table stickyHeader>
           {/* Header - Unified Column */}
           <TableHead>
             <TableRow sx={{ bgcolor: "primary.main", position: "sticky", top: 0, zIndex: 2 }}>
-              <TableCell rowSpan={2} sx={{ fontWeight: "bold", px: 2 }}>#</TableCell>
-              <TableCell rowSpan={2} sx={{ fontWeight: "bold", px: 2 }}>Driver</TableCell>
-              <TableCell colSpan={4} sx={{ fontWeight: "bold", textAlign: "center" }}>Average {name}</TableCell>
+              <TableCell rowSpan={2} sx={{ fontWeight: "bold", px: 2 }}>
+                #
+              </TableCell>
+              <TableCell rowSpan={2} sx={{ fontWeight: "bold", px: 2 }}>
+                Driver
+              </TableCell>
+              <TableCell colSpan={4} sx={{ fontWeight: "bold", textAlign: "center" }}>
+                Average {name}
+              </TableCell>
               {raceDates.map((race, index) => (
-                <TableCell key={index} rowSpan={2} sx={{ fontWeight: "bold", textAlign: "center" }}>{getSeasonLabel(race)}</TableCell>
+                <TableCell key={index} rowSpan={2} sx={{ fontWeight: "bold", textAlign: "center" }}>
+                  {getSeasonLabel(race)}
+                </TableCell>
               ))}
             </TableRow>
 
             {/* Sub-Headers */}
             <TableRow sx={{ bgcolor: "primary.light", position: "sticky", top: 53, zIndex: 1 }}>
-                <Tooltip title={`Average ${name.toLowerCase()} on this track`}>
+              <Tooltip title={`Average ${name.toLowerCase()} on this track`}>
                 <TableCell sx={{ fontWeight: "bold", textAlign: "center" }}>This Track</TableCell>
               </Tooltip>
               <Tooltip title={`Average ${name.toLowerCase()} on similar tracks`}>
-                <TableCell sx={{ fontWeight: "bold", textAlign: "center" }}>Similar Tracks</TableCell>
+                <TableCell sx={{ fontWeight: "bold", textAlign: "center" }}>
+                  Similar Tracks
+                </TableCell>
               </Tooltip>
               <Tooltip title={`Average ${name.toLowerCase()} on all tracks`}>
                 <TableCell sx={{ fontWeight: "bold", textAlign: "center" }}>All Tracks</TableCell>
@@ -170,34 +199,69 @@ const DriverFantasyTable = ({
                 <TableCell sx={{ width: "40px", fontWeight: "bold", px: 2, cursor: "pointer" }}>
                   {driverCarNumbers[driver] || "-"}
                 </TableCell>
-                <TableCell 
-                    sx={{ fontWeight: "bold", px: 2, cursor: "pointer" }}
-                    onClick={() => handleDriverClick(driver)}
-                  >
-                    {driver}
+                <TableCell
+                  sx={{ fontWeight: "bold", px: 2, cursor: "pointer" }}
+                  onClick={() => handleDriverClick(driver)}
+                >
+                  {driver}
                 </TableCell>
                 <Tooltip title={`Average ${name.toLowerCase()} on this track`}>
                   <TableCell sx={{ textAlign: "center" }}>
-                    {getAverageFeatureValue(raceData, driver, raceDates, excludePlayoffs, excludeDnf, feature)}
+                    {getAverageFeatureValue(
+                      raceData,
+                      driver,
+                      raceDates,
+                      excludePlayoffs,
+                      excludeDnf,
+                      feature
+                    )}
                   </TableCell>
                 </Tooltip>
                 <Tooltip title={`Average ${name.toLowerCase()} on similar tracks`}>
                   <TableCell sx={{ textAlign: "center" }}>
-                    {getAverageFeatureValue(raceData, driver, similarRaceDates, excludePlayoffs, excludeDnf, feature)}
+                    {getAverageFeatureValue(
+                      raceData,
+                      driver,
+                      similarRaceDates,
+                      excludePlayoffs,
+                      excludeDnf,
+                      feature
+                    )}
                   </TableCell>
                 </Tooltip>
                 <Tooltip title={`Average ${name.toLowerCase()} on all tracks`}>
                   <TableCell sx={{ textAlign: "center" }}>
-                    {getAverageFeatureValue(raceData, driver, allRaceDates, excludePlayoffs, excludeDnf, feature)}
+                    {getAverageFeatureValue(
+                      raceData,
+                      driver,
+                      allRaceDates,
+                      excludePlayoffs,
+                      excludeDnf,
+                      feature
+                    )}
                   </TableCell>
                 </Tooltip>
                 <Tooltip title={`Average ${name.toLowerCase()} in the current season`}>
                   <TableCell sx={{ textAlign: "center" }}>
-                    {getAverageFeatureValue(raceData, driver, currentSeasonDates, excludePlayoffs, excludeDnf, feature)}
+                    {getAverageFeatureValue(
+                      raceData,
+                      driver,
+                      currentSeasonDates,
+                      excludePlayoffs,
+                      excludeDnf,
+                      feature
+                    )}
                   </TableCell>
                 </Tooltip>
                 {raceDates.map((race_date, idx) => {
-                  const { value, status } = getFeatureValue(raceData, driver, race_date, excludePlayoffs, excludeDnf, feature);
+                  const { value, status } = getFeatureValue(
+                    raceData,
+                    driver,
+                    race_date,
+                    excludePlayoffs,
+                    excludeDnf,
+                    feature
+                  );
                   return (
                     <Tooltip title={`${name} in this race`}>
                       <TableCell

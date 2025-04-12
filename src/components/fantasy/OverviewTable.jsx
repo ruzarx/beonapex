@@ -1,8 +1,22 @@
-import React, { useState, useMemo } from "react";
-import { TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody, Checkbox, FormControlLabel, Box, Tooltip } from "@mui/material";
-import raceData from "../../data/data.json"; 
+import {
+  Box,
+  Checkbox,
+  FormControlLabel,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Tooltip,
+} from "@mui/material";
+import React, { useMemo, useState } from "react";
+import { loadJsonData } from "../../utils/dataLoader";
 import { getAverageFeatureValue } from "../../utils/raceUtils";
 import DriverDetailsDrawer from "./FantasyDriverDetailsDrawer";
+
+const raceData = loadJsonData("data.json");
 
 const OverviewTable = ({ groupDrivers, raceDates, pastSeasonDates, currentSeasonDates }) => {
   const [excludePlayoffs, setExcludePlayoffs] = useState(false);
@@ -30,8 +44,22 @@ const OverviewTable = ({ groupDrivers, raceDates, pastSeasonDates, currentSeason
   }, [raceData, currentSeasonDates]);
 
   const sortedDrivers = [...groupDrivers].sort((a, b) => {
-    const avgA = getAverageFeatureValue(raceData, a, raceDates, excludePlayoffs, excludeDnf, "race_pos");
-    const avgB = getAverageFeatureValue(raceData, b, raceDates, excludePlayoffs, excludeDnf, "race_pos");
+    const avgA = getAverageFeatureValue(
+      raceData,
+      a,
+      raceDates,
+      excludePlayoffs,
+      excludeDnf,
+      "race_pos"
+    );
+    const avgB = getAverageFeatureValue(
+      raceData,
+      b,
+      raceDates,
+      excludePlayoffs,
+      excludeDnf,
+      "race_pos"
+    );
     const isInvalidA = avgA === "-" || isNaN(avgA);
     const isInvalidB = avgB === "-" || isNaN(avgB);
     if (isInvalidA && isInvalidB) return 0;
@@ -45,7 +73,12 @@ const OverviewTable = ({ groupDrivers, raceDates, pastSeasonDates, currentSeason
       <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 2 }}>
         <Box sx={{ display: "flex", alignItems: "center", gap: 3 }}>
           <FormControlLabel
-            control={<Checkbox checked={excludePlayoffs} onChange={() => setExcludePlayoffs(!excludePlayoffs)} />}
+            control={
+              <Checkbox
+                checked={excludePlayoffs}
+                onChange={() => setExcludePlayoffs(!excludePlayoffs)}
+              />
+            }
             label="Exclude Playoff Races"
           />
 
@@ -58,26 +91,26 @@ const OverviewTable = ({ groupDrivers, raceDates, pastSeasonDates, currentSeason
 
       {/* Table */}
       <TableContainer
-          sx={{
-            maxHeight: 700,
-            borderRadius: 2,
-            overflowY: "auto",
-            scrollbarWidth: "none", // Firefox: hides scrollbar
-            "&::-webkit-scrollbar": {
-              width: 0, // Chrome, Safari: hidden by default
-            },
-            "&:hover::-webkit-scrollbar": {
-              width: "6px", // Appear on hover
-            },
-            "&:hover::-webkit-scrollbar-thumb": {
-              backgroundColor: "#555", // Dark thumb
-              borderRadius: "4px",
-            },
-            "&:hover::-webkit-scrollbar-track": {
-              backgroundColor: "transparent",
-            },
-          }}
-        >
+        sx={{
+          maxHeight: 700,
+          borderRadius: 2,
+          overflowY: "auto",
+          scrollbarWidth: "none", // Firefox: hides scrollbar
+          "&::-webkit-scrollbar": {
+            width: 0, // Chrome, Safari: hidden by default
+          },
+          "&:hover::-webkit-scrollbar": {
+            width: "6px", // Appear on hover
+          },
+          "&:hover::-webkit-scrollbar-thumb": {
+            backgroundColor: "#555", // Dark thumb
+            borderRadius: "4px",
+          },
+          "&:hover::-webkit-scrollbar-track": {
+            backgroundColor: "transparent",
+          },
+        }}
+      >
         <Table stickyHeader>
           {/* Header - Unified Column */}
           <TableHead>
@@ -95,7 +128,7 @@ const OverviewTable = ({ groupDrivers, raceDates, pastSeasonDates, currentSeason
 
             {/* Sub-Headers */}
             <TableRow sx={{ bgcolor: "primary.light", position: "sticky", top: 53, zIndex: 1 }}>
-                <Tooltip title={`Average finish position`}>
+              <Tooltip title={`Average finish position`}>
                 <TableCell sx={{ fontWeight: "bold", textAlign: "center" }}>
                   Finish Position
                 </TableCell>
@@ -106,9 +139,7 @@ const OverviewTable = ({ groupDrivers, raceDates, pastSeasonDates, currentSeason
                 </TableCell>
               </Tooltip>
               <Tooltip title={`Average race rating`}>
-                <TableCell sx={{ fontWeight: "bold", textAlign: "center" }}>
-                  Race Rating
-                </TableCell>
+                <TableCell sx={{ fontWeight: "bold", textAlign: "center" }}>Race Rating</TableCell>
               </Tooltip>
               <Tooltip title={`Average fantasy points earned`}>
                 <TableCell sx={{ fontWeight: "bold", textAlign: "center" }}>
@@ -129,32 +160,60 @@ const OverviewTable = ({ groupDrivers, raceDates, pastSeasonDates, currentSeason
                 }}
               >
                 <TableCell sx={{ width: "40px", fontWeight: "bold", px: 2, cursor: "pointer" }}>
-                    {driverCarNumbers[driver] || "-"}
+                  {driverCarNumbers[driver] || "-"}
                 </TableCell>
-                <TableCell 
-                    sx={{ fontWeight: "bold", px: 2, cursor: "pointer" }}
-                    onClick={() => handleDriverClick(driver)}
-                  >
-                    {driver}
+                <TableCell
+                  sx={{ fontWeight: "bold", px: 2, cursor: "pointer" }}
+                  onClick={() => handleDriverClick(driver)}
+                >
+                  {driver}
                 </TableCell>
                 <Tooltip title={`Average finish position`}>
                   <TableCell sx={{ textAlign: "center" }}>
-                    {getAverageFeatureValue(raceData, driver, raceDates, excludePlayoffs, excludeDnf, "race_pos")}
+                    {getAverageFeatureValue(
+                      raceData,
+                      driver,
+                      raceDates,
+                      excludePlayoffs,
+                      excludeDnf,
+                      "race_pos"
+                    )}
                   </TableCell>
                 </Tooltip>
                 <Tooltip title={`Average qualification position`}>
                   <TableCell sx={{ textAlign: "center" }}>
-                    {getAverageFeatureValue(raceData, driver, raceDates, excludePlayoffs, excludeDnf, "quali_pos")}
+                    {getAverageFeatureValue(
+                      raceData,
+                      driver,
+                      raceDates,
+                      excludePlayoffs,
+                      excludeDnf,
+                      "quali_pos"
+                    )}
                   </TableCell>
                 </Tooltip>
                 <Tooltip title={`Average race rating`}>
                   <TableCell sx={{ textAlign: "center" }}>
-                    {getAverageFeatureValue(raceData, driver, raceDates, excludePlayoffs, excludeDnf, "fantasy_points")}
+                    {getAverageFeatureValue(
+                      raceData,
+                      driver,
+                      raceDates,
+                      excludePlayoffs,
+                      excludeDnf,
+                      "fantasy_points"
+                    )}
                   </TableCell>
                 </Tooltip>
                 <Tooltip title={`Average fantasy points earned`}>
                   <TableCell sx={{ textAlign: "center" }}>
-                    {getAverageFeatureValue(raceData, driver, raceDates, excludePlayoffs, excludeDnf, "driver_rating")}
+                    {getAverageFeatureValue(
+                      raceData,
+                      driver,
+                      raceDates,
+                      excludePlayoffs,
+                      excludeDnf,
+                      "driver_rating"
+                    )}
                   </TableCell>
                 </Tooltip>
               </TableRow>

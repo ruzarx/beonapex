@@ -1,18 +1,16 @@
+import { Box, Chip, Tab, Tabs, ToggleButton, ToggleButtonGroup, Typography } from "@mui/material";
 import React, { useState } from "react";
-import {
-  Box, Typography, Tabs, Tab, ToggleButton, ToggleButtonGroup, Chip
-} from "@mui/material";
+import { loadJsonData } from "../../utils/dataLoader";
 
-import racesData from "../../data/calendar.json";
-import nextRaceData from "../../data/next_race_data.json";
-
-import RaceSelector from "./RaceSelector";
-import StandingsPage from "./StandingsPage";
-import RaceResults from "./RaceResults";
-import StandingsDriverDrawer from "./StandingsDriverDrawer";
-import ResultsDriverDrawer from "./ResultsDrawer";
 import DetailedStats from "../detailed_stats/DetailedStats";
+import RaceResults from "./RaceResults";
+import RaceSelector from "./RaceSelector";
+import ResultsDriverDrawer from "./ResultsDrawer";
+import StandingsDriverDrawer from "./StandingsDriverDrawer";
+import StandingsPage from "./StandingsPage";
 
+const racesData = loadJsonData("calendar.json");
+const nextRaceData = loadJsonData("next_race_data.json");
 
 const drawerWidth = 240;
 const collapsedWidth = 64;
@@ -22,18 +20,20 @@ const StatisticsScreen = (themeMode) => {
   const [seasonYear, setSeasonYear] = useState(2024); // Default to 2024
   const [showAllYears, setShowAllYears] = useState(false); // New state for showing all years
 
-  const allSeasons = Array.from(new Set(racesData.map(r => r.season_year))).sort();
+  const allSeasons = Array.from(new Set(racesData.map((r) => r.season_year))).sort();
 
   const getLatestRaceNumber = (year) => {
     const today = new Date();
-    const seasonRaces = racesData.filter((r) => (r.season_year === year && new Date(r.race_date) <= today));
+    const seasonRaces = racesData.filter(
+      (r) => r.season_year === year && new Date(r.race_date) <= today
+    );
     return Math.max(...seasonRaces.map((r) => r.race_number));
   };
-  
+
   const initialSeasonYear =
-  nextRaceData["next_race_number"] <= 36
-  ? nextRaceData["next_race_season"]
-  : nextRaceData["next_race_season"] - 1;
+    nextRaceData["next_race_number"] <= 36
+      ? nextRaceData["next_race_season"]
+      : nextRaceData["next_race_season"] - 1;
   const initialRaceNumber = getLatestRaceNumber(initialSeasonYear);
 
   const [currentRace, setCurrentRace] = useState(initialRaceNumber);
@@ -55,32 +55,30 @@ const StatisticsScreen = (themeMode) => {
     setSelectedDriver(driverName);
     setDriverDrawerOpen(true);
   };
-  
+
   const handleDrawerClose = () => {
     setDriverDrawerOpen(false);
     setSelectedDriver(null);
   };
-  
 
-  const filteredRaces = racesData.filter(
-    (race) => race.season_year === seasonYear
-  );
+  const filteredRaces = racesData.filter((race) => race.season_year === seasonYear);
 
   const currentRaceInfo = racesData.find(
     (r) => r.season_year === seasonYear && r.race_number === currentRace
   );
-  
+
   const currentRaceName = currentRaceInfo?.race_name || "Race";
 
   const formatDate = (rawDate) => {
     const d = new Date(rawDate);
     return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
   };
-  
+
   const raceChipLabel = currentRaceInfo
-    ? `Race ${currentRaceInfo.race_number}: ${currentRaceInfo.race_name} (${formatDate(currentRaceInfo.race_date)})`
+    ? `Race ${currentRaceInfo.race_number}: ${currentRaceInfo.race_name} (${formatDate(
+        currentRaceInfo.race_date
+      )})`
     : "Race Info";
-  
 
   return (
     <Box sx={{ display: "flex" }}>
@@ -99,9 +97,10 @@ const StatisticsScreen = (themeMode) => {
         component="main"
         sx={{
           flexGrow: 1,
-          marginLeft: (selectedTab === "standings" || selectedTab === "results") && raceSelectorOpen 
-            ? `${drawerWidth}px` 
-            : `${collapsedWidth}px`,
+          marginLeft:
+            (selectedTab === "standings" || selectedTab === "results") && raceSelectorOpen
+              ? `${drawerWidth}px`
+              : `${collapsedWidth}px`,
           transition: "margin 0.3s ease",
           padding: 2,
         }}
@@ -120,7 +119,7 @@ const StatisticsScreen = (themeMode) => {
             justifyContent: "space-between",
             mb: 2,
             flexWrap: "wrap",
-            gap: 2
+            gap: 2,
           }}
         >
           {selectedTab === "stats" ? (
@@ -225,7 +224,6 @@ const StatisticsScreen = (themeMode) => {
           raceName={currentRaceInfo.race_name}
         />
       )}
-
     </Box>
   );
 };

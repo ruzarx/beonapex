@@ -1,7 +1,19 @@
+import {
+  Checkbox,
+  FormControlLabel,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+} from "@mui/material";
 import React, { useState } from "react";
-import { TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody, Checkbox, FormControlLabel } from "@mui/material";
-import raceData from "../../data/data.json"; 
+import { loadJsonData } from "../../utils/dataLoader";
 import { getAverageFeatureValue } from "../../utils/raceUtils";
+
+const raceData = loadJsonData("data.json");
 
 const OverviewTable = ({ drivers, raceDates }) => {
   const [excludePlayoffs, setExcludePlayoffs] = useState(false);
@@ -9,9 +21,13 @@ const OverviewTable = ({ drivers, raceDates }) => {
 
   return (
     <TableContainer component={Paper} sx={{ maxHeight: 700, overflow: "auto" }}>
-
       <FormControlLabel
-        control={<Checkbox checked={excludePlayoffs} onChange={() => setExcludePlayoffs(!excludePlayoffs)} />}
+        control={
+          <Checkbox
+            checked={excludePlayoffs}
+            onChange={() => setExcludePlayoffs(!excludePlayoffs)}
+          />
+        }
         label="Exclude Playoff Races"
       />
 
@@ -35,16 +51,44 @@ const OverviewTable = ({ drivers, raceDates }) => {
             <TableRow key={index}>
               <TableCell sx={{ width: "120px" }}>{driver}</TableCell>
               <TableCell sx={{ width: "80px", textAlign: "center" }}>
-                {getAverageFeatureValue(raceData, driver, raceDates, excludePlayoffs, excludeDnf, "race_pos")}
+                {getAverageFeatureValue(
+                  raceData,
+                  driver,
+                  raceDates,
+                  excludePlayoffs,
+                  excludeDnf,
+                  "race_pos"
+                )}
               </TableCell>
               <TableCell sx={{ width: "80px", textAlign: "center" }}>
-                {getAverageFeatureValue(raceData, driver, raceDates, excludePlayoffs, excludeDnf, "quali_pos")}
+                {getAverageFeatureValue(
+                  raceData,
+                  driver,
+                  raceDates,
+                  excludePlayoffs,
+                  excludeDnf,
+                  "quali_pos"
+                )}
               </TableCell>
               <TableCell sx={{ width: "80px", textAlign: "center" }}>
-                {getAverageFeatureValue(raceData, driver, raceDates, excludePlayoffs, excludeDnf, "fantasy_points")}
+                {getAverageFeatureValue(
+                  raceData,
+                  driver,
+                  raceDates,
+                  excludePlayoffs,
+                  excludeDnf,
+                  "fantasy_points"
+                )}
               </TableCell>
               <TableCell sx={{ width: "80px", textAlign: "center" }}>
-                {getAverageFeatureValue(raceData, driver, raceDates, excludePlayoffs, excludeDnf, "driver_rating")}
+                {getAverageFeatureValue(
+                  raceData,
+                  driver,
+                  raceDates,
+                  excludePlayoffs,
+                  excludeDnf,
+                  "driver_rating"
+                )}
               </TableCell>
             </TableRow>
           ))}

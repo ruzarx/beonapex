@@ -1,24 +1,21 @@
-import React, { useState } from "react";
 import {
-  TableContainer,
-  Paper,
-  Table,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableBody,
+  Box,
   Checkbox,
   FormControlLabel,
-  Box,
-  Typography,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
   Tooltip,
 } from "@mui/material";
-import raceData from "../../data/data.json";
-import {
-  getTeamFeatureValue,
-  getSeasonLabel,
-} from "../../utils/raceUtils";
+import React, { useState } from "react";
+import { loadJsonData } from "../../utils/dataLoader";
+import { getSeasonLabel, getTeamFeatureValue } from "../../utils/raceUtils";
 
+const raceData = loadJsonData("data.json");
 const TeamFantasyTable = ({
   teams,
   raceDates,
@@ -46,12 +43,19 @@ const TeamFantasyTable = ({
       <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 2 }}>
         <Box sx={{ display: "flex", alignItems: "center", gap: 3 }}>
           <FormControlLabel
-            control={<Checkbox checked={excludePlayoffs} onChange={() => setExcludePlayoffs(!excludePlayoffs)} />}
+            control={
+              <Checkbox
+                checked={excludePlayoffs}
+                onChange={() => setExcludePlayoffs(!excludePlayoffs)}
+              />
+            }
             label="Exclude Playoff Races"
           />
           {feature !== "quali_pos" && (
             <FormControlLabel
-              control={<Checkbox checked={excludeDnf} onChange={() => setExcludeDnf(!excludeDnf)} />}
+              control={
+                <Checkbox checked={excludeDnf} onChange={() => setExcludeDnf(!excludeDnf)} />
+              }
               label="Exclude DNFs"
             />
           )}
@@ -67,11 +71,18 @@ const TeamFantasyTable = ({
               <TableCell rowSpan={2} sx={{ fontWeight: "bold", color: "black", px: 2 }}>
                 Team
               </TableCell>
-              <TableCell colSpan={4} sx={{ fontWeight: "bold", color: "black", textAlign: "center" }}>
+              <TableCell
+                colSpan={4}
+                sx={{ fontWeight: "bold", color: "black", textAlign: "center" }}
+              >
                 Average {name}
               </TableCell>
               {raceDates.map((race, index) => (
-                <TableCell key={index} rowSpan={2} sx={{ fontWeight: "bold", color: "black", textAlign: "center" }}>
+                <TableCell
+                  key={index}
+                  rowSpan={2}
+                  sx={{ fontWeight: "bold", color: "black", textAlign: "center" }}
+                >
                   {getSeasonLabel(race)}
                 </TableCell>
               ))}
@@ -79,7 +90,7 @@ const TeamFantasyTable = ({
 
             {/* Sub-Headers */}
             <TableRow sx={{ bgcolor: "primary.light" }}>
-                <Tooltip title={`Team average ${name.toLowerCase()} on this track`}>
+              <Tooltip title={`Team average ${name.toLowerCase()} on this track`}>
                 <TableCell sx={{ fontWeight: "bold", color: "black", textAlign: "center" }}>
                   This Track
                 </TableCell>
@@ -115,30 +126,65 @@ const TeamFantasyTable = ({
                 <TableCell sx={{ fontWeight: "bold", px: 2 }}>{team}</TableCell>
                 <Tooltip title={`Team average ${name.toLowerCase()} on this track`}>
                   <TableCell sx={{ textAlign: "center" }}>
-                    {getTeamFeatureValue(raceData, team, raceDates, excludePlayoffs, excludeDnf, feature)}
+                    {getTeamFeatureValue(
+                      raceData,
+                      team,
+                      raceDates,
+                      excludePlayoffs,
+                      excludeDnf,
+                      feature
+                    )}
                   </TableCell>
                 </Tooltip>
                 <Tooltip title={`Team average ${name.toLowerCase()} on similar tracks`}>
                   <TableCell sx={{ textAlign: "center" }}>
-                    {getTeamFeatureValue(raceData, team, similarRaceDates, excludePlayoffs, excludeDnf, feature)}
+                    {getTeamFeatureValue(
+                      raceData,
+                      team,
+                      similarRaceDates,
+                      excludePlayoffs,
+                      excludeDnf,
+                      feature
+                    )}
                   </TableCell>
                 </Tooltip>
                 <Tooltip title={`Team average ${name.toLowerCase()} on all tracks`}>
                   <TableCell sx={{ textAlign: "center" }}>
-                    {getTeamFeatureValue(raceData, team, allRaceDates, excludePlayoffs, excludeDnf, feature)}
+                    {getTeamFeatureValue(
+                      raceData,
+                      team,
+                      allRaceDates,
+                      excludePlayoffs,
+                      excludeDnf,
+                      feature
+                    )}
                   </TableCell>
                 </Tooltip>
                 <Tooltip title={`Team average ${name.toLowerCase()} in the current season`}>
                   <TableCell sx={{ textAlign: "center" }}>
-                    {getTeamFeatureValue(raceData, team, currentSeasonDates, excludePlayoffs, excludeDnf, feature)}
+                    {getTeamFeatureValue(
+                      raceData,
+                      team,
+                      currentSeasonDates,
+                      excludePlayoffs,
+                      excludeDnf,
+                      feature
+                    )}
                   </TableCell>
                 </Tooltip>
-                  {raceDates.map((race_date, idx) => (
-                    <Tooltip title={`Team ${name.toLowerCase()} in this race`}>
-                      <TableCell key={idx} sx={{ width: "80px", textAlign: "center" }}>
-                        {getTeamFeatureValue(raceData, team, race_date, excludePlayoffs, excludeDnf, feature)}
-                      </TableCell>
-                    </Tooltip>
+                {raceDates.map((race_date, idx) => (
+                  <Tooltip title={`Team ${name.toLowerCase()} in this race`}>
+                    <TableCell key={idx} sx={{ width: "80px", textAlign: "center" }}>
+                      {getTeamFeatureValue(
+                        raceData,
+                        team,
+                        race_date,
+                        excludePlayoffs,
+                        excludeDnf,
+                        feature
+                      )}
+                    </TableCell>
+                  </Tooltip>
                 ))}
               </TableRow>
             ))}

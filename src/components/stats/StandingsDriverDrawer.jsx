@@ -1,27 +1,35 @@
-import React from "react";
-import {
-  Drawer,
-  Box,
-  Typography,
-  IconButton,
-  Divider,
-  Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper,
-} from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import {
-  Chart as ChartJS,
+  Box,
+  Divider,
+  Drawer,
+  IconButton,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Typography,
+} from "@mui/material";
+import {
   CategoryScale,
+  Chart as ChartJS,
+  Legend,
   LinearScale,
-  PointElement,
   LineElement,
+  PointElement,
   Title,
   Tooltip,
-  Legend
 } from "chart.js";
-import { Line } from "react-chartjs-2";
-import raceData from "../../data/data.json";
-import standingsData from "../../data/standings.json";
 import annotationPlugin from "chartjs-plugin-annotation";
+import React from "react";
+import { Line } from "react-chartjs-2";
+import { loadJsonData } from "../../utils/dataLoader";
+
+const raceData = loadJsonData("data.json");
+const standingsData = loadJsonData("standings.json");
 
 ChartJS.register(
   CategoryScale,
@@ -38,26 +46,26 @@ const StandingsDriverDrawer = ({ driver, open, onClose, seasonYear, currentRace 
   if (!driver) return null;
 
   const driverRaces = raceData.filter(
-    r => r.driver_name === driver && r.season_year === seasonYear && r.race_number <= currentRace
+    (r) => r.driver_name === driver && r.season_year === seasonYear && r.race_number <= currentRace
   );
 
   const driverStandings = standingsData.filter(
-    r => r.driver_name === driver && r.season_year === seasonYear && r.race_number <= currentRace
+    (r) => r.driver_name === driver && r.season_year === seasonYear && r.race_number <= currentRace
   );
 
-  const raceLabels = driverRaces.map(r => `R${r.race_number}`);
-  const finishPositions = driverRaces.map(r => r.race_pos);
+  const raceLabels = driverRaces.map((r) => `R${r.race_number}`);
+  const finishPositions = driverRaces.map((r) => r.race_pos);
   const avgPositions = driverRaces.map((_, i) =>
     (driverRaces.slice(0, i + 1).reduce((sum, r) => sum + r.race_pos, 0) / (i + 1)).toFixed(2)
   );
 
-  const pointsDiff = driverStandings.map(r => {
+  const pointsDiff = driverStandings.map((r) => {
     const parsed = parseInt(r.point_gap_to_bubble, 10);
     return !isNaN(parsed) ? parsed : null;
   });
 
   // Relegation logic
-  const relegationIndex = driverStandings.findIndex(r => {
+  const relegationIndex = driverStandings.findIndex((r) => {
     const parsed = parseInt(r.point_gap_to_bubble, 10);
     return !isNaN(parsed) && parsed <= -1000;
   });
@@ -76,9 +84,9 @@ const StandingsDriverDrawer = ({ driver, open, onClose, seasonYear, currentRace 
         position: "start",
         backgroundColor: "rgba(0,0,0,0.6)",
         color: "white",
-        font: { weight: "bold" }
-      }
-    }
+        font: { weight: "bold" },
+      },
+    },
   };
 
   if (relegationIndex !== -1) {
@@ -102,8 +110,8 @@ const StandingsDriverDrawer = ({ driver, open, onClose, seasonYear, currentRace 
         position: "top",
         backgroundColor: "red",
         color: "white",
-        font: { weight: "bold" }
-      }
+        font: { weight: "bold" },
+      },
     };
   }
 
@@ -126,8 +134,8 @@ const StandingsDriverDrawer = ({ driver, open, onClose, seasonYear, currentRace 
         borderDash: [5, 5],
         tension: 0.3,
         pointRadius: 3,
-      }
-    ]
+      },
+    ],
   };
 
   const positionChartOptions = {
@@ -137,9 +145,9 @@ const StandingsDriverDrawer = ({ driver, open, onClose, seasonYear, currentRace 
       y: {
         reverse: true,
         min: 1,
-        title: { display: true, text: "Position" }
-      }
-    }
+        title: { display: true, text: "Position" },
+      },
+    },
   };
 
   const pointsChartData = {
@@ -150,8 +158,8 @@ const StandingsDriverDrawer = ({ driver, open, onClose, seasonYear, currentRace 
         data: pointsDiff,
         borderColor: "red",
         fill: false,
-      }
-    ]
+      },
+    ],
   };
 
   const pointsChartOptions = {
@@ -159,12 +167,12 @@ const StandingsDriverDrawer = ({ driver, open, onClose, seasonYear, currentRace 
     maintainAspectRatio: false,
     scales: {
       y: {
-        title: { display: true, text: "Points to Cutoff" }
-      }
+        title: { display: true, text: "Points to Cutoff" },
+      },
     },
     plugins: {
-      annotation: { annotations }
-    }
+      annotation: { annotations },
+    },
   };
 
   return (
@@ -172,7 +180,9 @@ const StandingsDriverDrawer = ({ driver, open, onClose, seasonYear, currentRace 
       <Box sx={{ width: "60vw", p: 3, maxWidth: "100%" }}>
         <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
           <Typography variant="h5">{driver}</Typography>
-          <IconButton onClick={onClose}><CloseIcon /></IconButton>
+          <IconButton onClick={onClose}>
+            <CloseIcon />
+          </IconButton>
         </Box>
 
         <Divider sx={{ mb: 2 }} />
@@ -207,15 +217,17 @@ const StandingsDriverDrawer = ({ driver, open, onClose, seasonYear, currentRace 
               </TableRow>
             </TableHead>
             <TableBody>
-                {[...driverRaces].reverse().map((r, idx) => (
+              {[...driverRaces].reverse().map((r, idx) => (
                 <TableRow key={idx}>
-                  <TableCell>{r.race_number}</TableCell>  
+                  <TableCell>{r.race_number}</TableCell>
                   <TableCell>{r.track_name}</TableCell>
                   <TableCell>{r.race_pos}</TableCell>
                   <TableCell>{r.quali_pos}</TableCell>
                   <TableCell>{r.driver_rating}</TableCell>
                   <TableCell>{r.stage_1_pts + r.stage_2_pts + r.stage_3_pts}</TableCell>
-                  <TableCell>{r.stage_1_pts + r.stage_2_pts + r.stage_3_pts + r.finish_position_points}</TableCell>
+                  <TableCell>
+                    {r.stage_1_pts + r.stage_2_pts + r.stage_3_pts + r.finish_position_points}
+                  </TableCell>
                   <TableCell>{r.status}</TableCell>
                 </TableRow>
               ))}

@@ -1,34 +1,46 @@
+import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
+import Filter1Icon from "@mui/icons-material/Filter1";
+import Filter2Icon from "@mui/icons-material/Filter2";
+import Filter3Icon from "@mui/icons-material/Filter3";
+import MilitaryTechIcon from "@mui/icons-material/MilitaryTech";
 import {
-  Paper, Table, TableBody, TableContainer, TableHead, TableRow, TableCell,
-  TableSortLabel, Box, Typography, Tooltip
+  Box,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  TableSortLabel,
+  Tooltip,
+  Typography,
 } from "@mui/material";
 import React from "react";
-import rawStandingsData from "../../data/standings.json";
-import { getStandings, getBestFinish } from "../../utils/standingsCalculations";
-import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
-import Filter1Icon from '@mui/icons-material/Filter1';
-import Filter2Icon from '@mui/icons-material/Filter2';
-import Filter3Icon from '@mui/icons-material/Filter3';
-import MilitaryTechIcon from '@mui/icons-material/MilitaryTech';
+import { loadJsonData } from "../../utils/dataLoader";
+import { getBestFinish, getStandings } from "../../utils/standingsCalculations";
+
+const rawStandingsData = loadJsonData("standings.json");
 
 const SeasonStandings = ({ seasonYear, currentRace, themeMode, onDriverClick }) => {
   const isDark = themeMode["themeMode"] === "dark";
 
-  const standingsData = rawStandingsData.filter(r => r.season_year === seasonYear);
-  const allDrivers = [...new Set(
-    standingsData.filter(r => r.race_number <= currentRace).map(r => r.driver_name)
-  )];
-  const currentSeasonStandingsData = standingsData.filter(r => r.race_number === currentRace);
+  const standingsData = rawStandingsData.filter((r) => r.season_year === seasonYear);
+  const allDrivers = [
+    ...new Set(standingsData.filter((r) => r.race_number <= currentRace).map((r) => r.driver_name)),
+  ];
+  const currentSeasonStandingsData = standingsData.filter((r) => r.race_number === currentRace);
 
   const driverCarNumbers = Object.fromEntries(
-    currentSeasonStandingsData.map(r => [r.driver_name, r.car_number])
+    currentSeasonStandingsData.map((r) => [r.driver_name, r.car_number])
   );
 
   const seasonPosMap = Object.fromEntries(
-    allDrivers.map(driver => ({
-      driver,
-      points: getStandings(currentSeasonStandingsData, driver, "season_points")
-    }))
+    allDrivers
+      .map((driver) => ({
+        driver,
+        points: getStandings(currentSeasonStandingsData, driver, "season_points"),
+      }))
       .sort((a, b) => b.points - a.points)
       .map(({ driver }, i) => [driver, i + 1])
   );
@@ -39,47 +51,46 @@ const SeasonStandings = ({ seasonYear, currentRace, themeMode, onDriverClick }) 
     return aVal - bVal;
   });
 
-  const applyZebraTint = (colorEven, colorOdd, index) =>
-    index % 2 === 0 ? colorEven : colorOdd;
+  const applyZebraTint = (colorEven, colorOdd, index) => (index % 2 === 0 ? colorEven : colorOdd);
 
   const getHighlight = (driver, index) => {
     const pos = seasonPosMap[driver];
     let highlightLimit = 20;
-  
+
     if (currentRace >= 27 && currentRace <= 29) highlightLimit = 16;
     else if (currentRace >= 30 && currentRace <= 32) highlightLimit = 12;
     else if (currentRace >= 33 && currentRace <= 35) highlightLimit = 8;
     else if (currentRace === 36) highlightLimit = 4;
-  
+
     if (highlightLimit && pos <= highlightLimit) {
-      return applyZebraTint(
-        isDark ? "#1e1e1e" : "#ffffff",
-        isDark ? "#2a2a2a" : "#f9f9f9",
-        index
-      );
+      return applyZebraTint(isDark ? "#1e1e1e" : "#ffffff", isDark ? "#2a2a2a" : "#f9f9f9", index);
     }
-  
+
     return undefined;
   };
-  
 
   const driverWinsByStage = Object.fromEntries(
-    allDrivers.map(driver => {
-      const race = currentSeasonStandingsData.find(r => r.driver_name === driver);
-      return [driver, {
-        season: race?.season_wins || 0,
-        round16: race?.playoff_16_wins || 0,
-        round12: race?.playoff_12_wins || 0,
-        round8: race?.playoff_8_wins || 0,
-        championship: race?.champion ? 1 : 0,
-      }];
+    allDrivers.map((driver) => {
+      const race = currentSeasonStandingsData.find((r) => r.driver_name === driver);
+      return [
+        driver,
+        {
+          season: race?.season_wins || 0,
+          round16: race?.playoff_16_wins || 0,
+          round12: race?.playoff_12_wins || 0,
+          round8: race?.playoff_8_wins || 0,
+          championship: race?.champion ? 1 : 0,
+        },
+      ];
     })
   );
 
   return (
     <Paper sx={{ borderRadius: 3, p: 3, boxShadow: 3 }}>
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-        <Typography variant="h6" fontWeight="bold">Regular Season Standings</Typography>
+        <Typography variant="h6" fontWeight="bold">
+          Regular Season Standings
+        </Typography>
       </Box>
 
       <TableContainer>
@@ -87,7 +98,9 @@ const SeasonStandings = ({ seasonYear, currentRace, themeMode, onDriverClick }) 
           <TableHead>
             <TableRow sx={{ bgcolor: "primary.main" }}>
               <TableCell sx={{ fontWeight: "bold", textAlign: "center" }}>
-                <TableSortLabel active direction="asc">Season Pos</TableSortLabel>
+                <TableSortLabel active direction="asc">
+                  Season Pos
+                </TableSortLabel>
               </TableCell>
               <TableCell sx={{ fontWeight: "bold", px: 2 }}>Driver</TableCell>
               <TableCell sx={{ fontWeight: "bold", px: 2 }}>#</TableCell>
@@ -108,20 +121,26 @@ const SeasonStandings = ({ seasonYear, currentRace, themeMode, onDriverClick }) 
                   bgcolor: getHighlight(driver, index),
                   height: 64,
                   "&:hover": { bgcolor: "action.selected", transition: "all 0.3s ease" },
-                  cursor: "pointer"
+                  cursor: "pointer",
                 }}
                 onClick={() => onDriverClick(driver)}
               >
-                <TableCell sx={{ textAlign: "center", fontWeight: "bold" }}>{seasonPosMap[driver]}</TableCell>
+                <TableCell sx={{ textAlign: "center", fontWeight: "bold" }}>
+                  {seasonPosMap[driver]}
+                </TableCell>
                 <TableCell sx={{ fontWeight: "bold", px: 2 }}>
                   <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                    <Typography fontWeight="bold" noWrap>{driver}</Typography>
+                    <Typography fontWeight="bold" noWrap>
+                      {driver}
+                    </Typography>
                     {driverWinsByStage[driver].season > 0 && (
                       <Tooltip title="Regular Season Wins">
                         <Box display="flex" alignItems="center" gap={0.5}>
                           <EmojiEventsIcon fontSize="small" color="primary" />
                           {driverWinsByStage[driver].season > 1 && (
-                            <Typography variant="caption">x{driverWinsByStage[driver].season}</Typography>
+                            <Typography variant="caption">
+                              x{driverWinsByStage[driver].season}
+                            </Typography>
                           )}
                         </Box>
                       </Tooltip>
@@ -131,7 +150,9 @@ const SeasonStandings = ({ seasonYear, currentRace, themeMode, onDriverClick }) 
                         <Box display="flex" alignItems="center" gap={0.5}>
                           <Filter1Icon fontSize="small" color="secondary" />
                           {driverWinsByStage[driver].round16 > 1 && (
-                            <Typography variant="caption">x{driverWinsByStage[driver].round16}</Typography>
+                            <Typography variant="caption">
+                              x{driverWinsByStage[driver].round16}
+                            </Typography>
                           )}
                         </Box>
                       </Tooltip>
@@ -141,7 +162,9 @@ const SeasonStandings = ({ seasonYear, currentRace, themeMode, onDriverClick }) 
                         <Box display="flex" alignItems="center" gap={0.5}>
                           <Filter2Icon fontSize="small" color="secondary" />
                           {driverWinsByStage[driver].round12 > 1 && (
-                            <Typography variant="caption">x{driverWinsByStage[driver].round12}</Typography>
+                            <Typography variant="caption">
+                              x{driverWinsByStage[driver].round12}
+                            </Typography>
                           )}
                         </Box>
                       </Tooltip>
@@ -151,14 +174,16 @@ const SeasonStandings = ({ seasonYear, currentRace, themeMode, onDriverClick }) 
                         <Box display="flex" alignItems="center" gap={0.5}>
                           <Filter3Icon fontSize="small" color="secondary" />
                           {driverWinsByStage[driver].round8 > 1 && (
-                            <Typography variant="caption">x{driverWinsByStage[driver].round8}</Typography>
+                            <Typography variant="caption">
+                              x{driverWinsByStage[driver].round8}
+                            </Typography>
                           )}
                         </Box>
                       </Tooltip>
                     )}
                     {driverWinsByStage[driver].championship > 0 && (
                       <Tooltip title="Championship Winner">
-                        <MilitaryTechIcon fontSize="small" sx={{ color: 'gold' }} />
+                        <MilitaryTechIcon fontSize="small" sx={{ color: "gold" }} />
                       </Tooltip>
                     )}
                   </Box>

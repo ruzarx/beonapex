@@ -1,26 +1,40 @@
-import React from "react";
+import CloseIcon from "@mui/icons-material/Close";
 import {
-  Drawer,
   Box,
-  Typography,
-  IconButton,
+  Card,
+  CardContent,
   Divider,
-  Paper,
+  Drawer,
   Grid2,
+  IconButton,
+  Paper,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
-  Card,
-  CardContent
+  Typography,
 } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
-import raceData from "../../data/data.json";
-import { getRankInGroup, getPreviousRaceResult, filterDriverRaces, getCleanAverageFeatureValue } from "../../utils/raceUtils";
+import React from "react";
+import { loadJsonData } from "../../utils/dataLoader";
+import {
+  filterDriverRaces,
+  getCleanAverageFeatureValue,
+  getPreviousRaceResult,
+  getRankInGroup,
+} from "../../utils/raceUtils";
 
-const DriverDetailsDrawer = ({ driver, groupDrivers, raceDates, pastSeasonDates, currentSeasonDates, onClose }) => {
+const raceData = loadJsonData("data.json");
+
+const DriverDetailsDrawer = ({
+  driver,
+  groupDrivers,
+  raceDates,
+  pastSeasonDates,
+  currentSeasonDates,
+  onClose,
+}) => {
   if (!driver) return null; // Prevent rendering if no driver is selected
 
   // const totalDrivers = groupDrivers.length;
@@ -28,8 +42,10 @@ const DriverDetailsDrawer = ({ driver, groupDrivers, raceDates, pastSeasonDates,
   const trackRaces = filterDriverRaces(raceData, driver, raceDates, false, false);
   const seasonRaces = filterDriverRaces(raceData, driver, currentSeasonDates, false, false);
   const pastSeasonRaces = filterDriverRaces(raceData, driver, pastSeasonDates, false, false);
-  const groupDriverAverages = groupDrivers.map(driver => {
-    const driverRaces = raceData.filter(race => (race.driver_name === driver && raceDates.includes(race.race_date)));
+  const groupDriverAverages = groupDrivers.map((driver) => {
+    const driverRaces = raceData.filter(
+      (race) => race.driver_name === driver && raceDates.includes(race.race_date)
+    );
     return {
       driver,
       race_pos: getCleanAverageFeatureValue("race_pos", driverRaces),
@@ -70,10 +86,11 @@ const DriverDetailsDrawer = ({ driver, groupDrivers, raceDates, pastSeasonDates,
   return (
     <Drawer anchor="right" open={Boolean(driver)} onClose={onClose}>
       <Box sx={{ width: "60vw", p: 3, bgcolor: "background.paper" }}>
-        
         {/* Header */}
         <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
-          <Typography variant="h5" fontWeight="bold">{driver}</Typography>
+          <Typography variant="h5" fontWeight="bold">
+            {driver}
+          </Typography>
           <IconButton onClick={onClose}>
             <CloseIcon />
           </IconButton>
@@ -84,39 +101,49 @@ const DriverDetailsDrawer = ({ driver, groupDrivers, raceDates, pastSeasonDates,
         {/* Stats Cards */}
         <Grid2 container spacing={2}>
           {[
-            { title: "This Track", data: [
+            {
+              title: "This Track",
+              data: [
                 { label: "Avg Finish", value: stats.avgFinish },
                 { label: "Avg Start", value: stats.avgStart },
                 { label: "Avg Rating", value: stats.avgRating },
-                { label: "Avg Fantasy Pts", value: stats.avgFantasy }
-              ] 
+                { label: "Avg Fantasy Pts", value: stats.avgFantasy },
+              ],
             },
-            { title: "Rank in Group", data: [
+            {
+              title: "Rank in Group",
+              data: [
                 { label: "Finish Rank", value: stats.finishRank },
                 { label: "Start Rank", value: stats.startRank },
                 { label: "Rating Rank", value: stats.ratingRank },
-                { label: "Fantasy Rank", value: stats.fantasyRank }
-              ] 
+                { label: "Fantasy Rank", value: stats.fantasyRank },
+              ],
             },
-            { title: "This Season So Far", data: [
+            {
+              title: "This Season So Far",
+              data: [
                 { label: "Avg Finish", value: stats.seasonFinish },
                 { label: "Avg Start", value: stats.seasonStart },
                 { label: "Avg Rating", value: stats.seasonRating },
-                { label: "Avg Fantasy Points", value: stats.seasonFantasy }
-              ] 
+                { label: "Avg Fantasy Points", value: stats.seasonFantasy },
+              ],
             },
-            { title: "Past Season To This Race", data: [
+            {
+              title: "Past Season To This Race",
+              data: [
                 { label: "Avg Finish", value: stats.pastSeasonFinish },
                 { label: "Avg Start", value: stats.pastSeasonStart },
                 { label: "Avg Rating", value: stats.pastSeasonRating },
-                { label: "Avg Fantasy Points", value: stats.pastSeasonFantasy }
-              ] 
-            }
+                { label: "Avg Fantasy Points", value: stats.pastSeasonFantasy },
+              ],
+            },
           ].map((section, index) => (
             <Grid2 item xs={3} key={index}>
               <Card elevation={3} sx={{ height: "100%" }}>
                 <CardContent>
-                  <Typography variant="h6" fontWeight="bold">{section.title}</Typography>
+                  <Typography variant="h6" fontWeight="bold">
+                    {section.title}
+                  </Typography>
                   {section.data.map((item, idx) => (
                     <Typography key={idx} sx={{ fontSize: 14 }}>
                       <strong>{item.label}:</strong> {item.value}
@@ -131,16 +158,28 @@ const DriverDetailsDrawer = ({ driver, groupDrivers, raceDates, pastSeasonDates,
         <Divider sx={{ my: 3 }} />
 
         {/* Previous 4 Races Table */}
-        <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>Previous Races</Typography>
+        <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>
+          Previous Races
+        </Typography>
         <TableContainer component={Paper}>
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell><strong>Race</strong></TableCell>
-                <TableCell><strong>Finish</strong></TableCell>
-                <TableCell><strong>Start</strong></TableCell>
-                <TableCell><strong>Rating</strong></TableCell>
-                <TableCell><strong>Fantasy Pts</strong></TableCell>
+                <TableCell>
+                  <strong>Race</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>Finish</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>Start</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>Rating</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>Fantasy Pts</strong>
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
