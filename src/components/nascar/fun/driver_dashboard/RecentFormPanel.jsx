@@ -5,11 +5,12 @@ import {
 import { motion } from "framer-motion";
 import DriverFormChart from "./DriverFormChart";
 import DriverFormTable from "./DriverFormTable";
+import { loadJsonData } from "../../utils/dataLoader";
 
-import raceData from "../../../../data/data.json";
-import calendar from "../../../../data/calendar.json";
-import trackSimilarity from "../../../../data/track_similarity.json";
-import nextRaceData from "../../../../data/next_race_data.json";
+const raceData = loadJsonData("data.json");
+const calendar = loadJsonData("calendar.json");
+const trackSimilarity = loadJsonData("track_similarity.json");
+const nextRaceData = loadJsonData("next_race_data.json");
 
 const RecentFormPanel = () => {
   const [metric, setMetric] = useState("race_pos");

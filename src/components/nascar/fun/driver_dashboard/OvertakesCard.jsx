@@ -15,10 +15,12 @@ import {
 } from "@mui/material";
 import { motion } from "framer-motion";
 import { format } from "date-fns";
-import raceData from "../../../../data/data.json";
-import nextRaceData from "../../../../data/next_race_data.json";
-import trackSimilarity from "../../../../data/track_similarity.json";
-import calendar from "../../../../data/calendar.json";
+import { loadJsonData } from "../../utils/dataLoader";
+
+const raceData = loadJsonData("data.json");
+const nextRaceData = loadJsonData("next_race_data.json");
+const calendar = loadJsonData("calendar.json");
+const trackSimilarity = loadJsonData("track_similarity.json");
 
 const getStats = (races) => {
   const passes = races.reduce((sum, r) => sum + (r.green_flag_passes || 0), 0);

@@ -1,4 +1,6 @@
-import entryList from "../../../data/entry_list.json";
+import { loadJsonData } from "../utils/dataLoader";
+
+const entryList = loadJsonData("entry_list.json");
 
 export const getRacerTypeCol = (racerType) => {
     if (racerType === "driver") return "driver_name"

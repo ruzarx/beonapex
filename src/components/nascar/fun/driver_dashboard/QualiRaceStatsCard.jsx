@@ -1,8 +1,10 @@
 import React, { useMemo } from "react";
 import { Box, Card, Stack, Typography, Chip } from "@mui/material";
 import { motion } from "framer-motion";
-import raceData from "../../../../data/data.json";
-import nextRaceData from "../../../../data/next_race_data.json";
+import { loadJsonData } from "../../utils/dataLoader";
+
+const raceData = loadJsonData("data.json");
+const nextRaceData = loadJsonData("next_race_data.json");
 
 const QualiRaceStatsCard = () => {
   const favoriteDriver = "Ross Chastain";

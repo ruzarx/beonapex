@@ -3,8 +3,10 @@ import {
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
   Typography, Paper
 } from "@mui/material";
-import raceData from "../../../../data/data.json";
-import nextRaceData from "../../../../data/next_race_data.json";
+import { loadJsonData } from "../../utils/dataLoader";
+
+const raceData = loadJsonData("data.json");
+const nextRaceData = loadJsonData("next_race_data.json");
 
 const TrackHistoryTable = () => {
   const favoriteDriver = "Ross Chastain";
