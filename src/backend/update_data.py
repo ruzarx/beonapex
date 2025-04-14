@@ -10,11 +10,11 @@ from entry_list import drivers_2025
 class DataProcessor:
     def update_data(self):
         df, (next_race_data, last_race_data) = self.get_stats()
-        with open('data/next_race_data.json', 'w') as file:
-            json.dump(next_race_data, file)
+        # with open('data/next_race_data.json', 'w') as file:
+        #     json.dump(next_race_data, file)
         with open('../data/next_race_data.json', 'w') as file:
             json.dump(next_race_data, file)
-        with open('data/last_race_data.json', 'w') as file:
+        with open('../data/last_race_data.json', 'w') as file:
             json.dump(last_race_data, file)
         standings = pd.DataFrame()
         for season_year in range(2024, int(last_race_data['last_race_season']) + 1):
