@@ -66,9 +66,9 @@ const DriverFormTable = ({ summaryData }) => {
                   size="small"
                 />
               )}
-              {race.stage_points !== undefined && (
+              {race.race_stage_points !== undefined && (
                 <Chip
-                  label={`🔺 ${race.stage_points}`}
+                  label={`🔺 ${race.race_stage_points}`}
                   color="default"
                   size="small"
                 />

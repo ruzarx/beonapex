@@ -5,11 +5,10 @@ import {
 import { motion } from "framer-motion";
 import DriverFormChart from "./DriverFormChart";
 import DriverFormTable from "./DriverFormTable";
+import { loadJsonData, getSeasonData, getTrackData } from "../../utils/dataLoader";
 
-import raceData from "../../../../data/data.json";
-import calendar from "../../../../data/calendar.json";
-import trackSimilarity from "../../../../data/track_similarity.json";
-import nextRaceData from "../../../../data/next_race_data.json";
+const calendar = loadJsonData("calendar.json");
+const nextRaceData = loadJsonData("next_race_data.json");
 
 const RecentFormPanel = () => {
   const [metric, setMetric] = useState("race_pos");
@@ -19,7 +18,6 @@ const RecentFormPanel = () => {
   const seasonYear = nextRaceData.next_race_season;
   const currentRaceNumber = nextRaceData.next_race_number;
   const trackName = nextRaceData.next_race_track;
-  const similarTracks = trackSimilarity[trackName]?.filter(t => t !== trackName) || [];
 
   const calendarMap = useMemo(() => {
     const map = {};
@@ -52,37 +50,12 @@ const RecentFormPanel = () => {
       });
   };
 
-  const filteredSeasonRaces = useMemo(() => {
-    return raceData.filter(r =>
-      r.driver_name === driverName &&
-      r.season_year === seasonYear &&
-      r.race_number < currentRaceNumber
-    );
-  }, [seasonYear, currentRaceNumber]);
-
-  const recentRacesSummary = useMemo(() => {
-    const recent = raceData.filter(r =>
-      r.driver_name === driverName &&
-      !(r.season_year === seasonYear && r.race_number >= currentRaceNumber)
-    );
-    return summarize(recent);
-  }, [driverName, seasonYear, currentRaceNumber]);
-
-  const sameTrackSummary = useMemo(() => {
-    const races = raceData.filter(r =>
-      r.driver_name === driverName &&
-      r.track_name === trackName
-    );
-    return summarize(races);
-  }, [driverName, trackName]);
-
-  const similarTrackSummary = useMemo(() => {
-    const races = raceData.filter(r =>
-      r.driver_name === driverName &&
-      similarTracks.includes(r.track_name)
-    );
-    return summarize(races);
-  }, [driverName, similarTracks]);
+  const driverSeasonRaces = getSeasonData("race", seasonYear, currentRaceNumber).filter(r => r.driver_name === driverName);
+  const recentRacesSummary = summarize(driverSeasonRaces);
+  const driverTrackRaces = getTrackData(2022, trackName, "exact");
+  const sameTrackSummary = summarize(driverTrackRaces);
+  const driverSimilarTracksRaces = getTrackData(2022, trackName, "both");
+  const similarTrackSummary = summarize(driverSimilarTracksRaces);
 
   const getCurrentTable = () => {
     if (tableScope === "recent") return recentRacesSummary;
@@ -133,7 +106,7 @@ const RecentFormPanel = () => {
             </Box>
           </Box>
 
-          <DriverFormChart metric={metric} seasonRaceData={filteredSeasonRaces} />
+          <DriverFormChart metric={metric} seasonRaceData={driverSeasonRaces} />
 
           <Box>
             <ToggleButtonGroup

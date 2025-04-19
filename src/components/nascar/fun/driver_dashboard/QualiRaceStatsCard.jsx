@@ -1,8 +1,9 @@
 import React, { useMemo } from "react";
-import { Box, Card, Stack, Typography, Chip } from "@mui/material";
+import { Card, Stack, Typography, Chip } from "@mui/material";
 import { motion } from "framer-motion";
-import raceData from "../../../../data/data.json";
-import nextRaceData from "../../../../data/next_race_data.json";
+import { loadJsonData, getSeasonData } from "../../utils/dataLoader";
+
+const nextRaceData = loadJsonData("next_race_data.json");
 
 const QualiRaceStatsCard = () => {
   const favoriteDriver = "Ross Chastain";
@@ -10,9 +11,8 @@ const QualiRaceStatsCard = () => {
   const currentRace = nextRaceData.next_race_number;
 
   const lastRace = useMemo(() => {
-    return raceData.find(r =>
+    return getSeasonData('race', seasonYear, currentRace).find(r =>
       r.driver_name === favoriteDriver &&
-      r.season_year === seasonYear &&
       r.race_number === currentRace - 1
     );
   }, [favoriteDriver, seasonYear, currentRace]);

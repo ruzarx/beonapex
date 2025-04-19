@@ -1,20 +1,16 @@
 import React, { useMemo } from "react";
-import {
-  Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
-  Typography, Paper
-} from "@mui/material";
-import raceData from "../../../../data/data.json";
-import nextRaceData from "../../../../data/next_race_data.json";
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, Paper } from "@mui/material";
+import { loadJsonData, getTrackData } from "../../utils/dataLoader";
+
+const nextRaceData = loadJsonData("next_race_data.json");
 
 const TrackHistoryTable = () => {
   const favoriteDriver = "Ross Chastain";
   const track = nextRaceData.next_race_track;
 
+  
   const rows = useMemo(() => {
-    const filtered = raceData.filter(r =>
-      r.driver_name === favoriteDriver &&
-      r.track_name === track
-    );
+    const filtered = getTrackData(2022, track, "exact").filter(r => r.driver_name === favoriteDriver);
 
     return filtered
       .sort((a, b) => b.race_date - a.race_date)

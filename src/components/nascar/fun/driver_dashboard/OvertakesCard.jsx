@@ -8,17 +8,17 @@ import {
   Typography,
   ToggleButton,
   ToggleButtonGroup,
-  useTheme,
   Divider,
   Paper,
   Fade,
 } from "@mui/material";
 import { motion } from "framer-motion";
 import { format } from "date-fns";
-import raceData from "../../../../data/data.json";
-import nextRaceData from "../../../../data/next_race_data.json";
-import trackSimilarity from "../../../../data/track_similarity.json";
-import calendar from "../../../../data/calendar.json";
+import { loadJsonData, getSeasonData, getTrackData } from "../../utils/dataLoader";
+
+const nextRaceData = loadJsonData("next_race_data.json");
+const calendar = loadJsonData("calendar.json");
+const trackSimilarity = loadJsonData("track_similarity.json");
 
 const getStats = (races) => {
   const passes = races.reduce((sum, r) => sum + (r.green_flag_passes || 0), 0);
@@ -27,18 +27,12 @@ const getStats = (races) => {
 };
 
 const OvertakesCard = () => {
-  const theme = useTheme();
   const [scope, setScope] = useState("recent");
   const favoriteDriver = "Ross Chastain";
   const seasonYear = nextRaceData.next_race_season;
   const currentRace = nextRaceData.next_race_number;
 
-  const driverRaces = useMemo(() =>
-    raceData.filter(r =>
-      r.driver_name === favoriteDriver &&
-      r.season_year === seasonYear &&
-      r.race_number < currentRace
-    ), [favoriteDriver, seasonYear, currentRace]);
+  const driverRaces = getSeasonData("race", seasonYear, currentRace).filter(r => r.driver_name === favoriteDriver);
 
   const trackList = useMemo(() => {
     const baseTrack = nextRaceData.next_race_track;
@@ -62,27 +56,21 @@ const OvertakesCard = () => {
     }
   
     if (scope === "same_track") {
-      return raceData
-        .filter(r =>
-          r.driver_name === favoriteDriver &&
-          r.track_name === nextRaceData.next_race_track
-        )
+      return getTrackData(2022, nextRaceData.next_race_track, "exact")
+        .filter(r => r.driver_name === favoriteDriver)
         .sort((a, b) => new Date(b.race_date) - new Date(a.race_date))
         .slice(0, 5);
     }
   
     if (scope === "track_type") {
-      return raceData
-        .filter(r =>
-          r.driver_name === favoriteDriver &&
-          trackList.includes(r.track_name)
-        )
+      return getTrackData(2022, nextRaceData.next_race_track, "both")
+        .filter(r => r.driver_name === favoriteDriver)
         .sort((a, b) => new Date(b.race_date) - new Date(a.race_date))
         .slice(0, 5);
     }
   
     return [];
-  }, [scope, driverRaces, raceData, favoriteDriver, nextRaceData, trackList]);
+  }, [scope, driverRaces, favoriteDriver, nextRaceData, trackList]);
   
 
   const { passes, passed, diff } = getStats(filteredRaces);
