@@ -57,7 +57,7 @@ const FantasyDriverDetailsDrawer = ({ driver, groupDrivers, trackRaces, pastSeas
   };
 
   const currentSeasonDates = [...new Set(currentSeasonRaces.map(race => race.race_date))].sort((a, b) => new Date(b) - new Date(a));
-  const pastRaces = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => ({
+  const pastRaces = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => ({
     num: `Race -${num}`,
     finish: getPreviousRaceResult(driverCurrentSeasonRaces, driver, "race_pos", currentSeasonDates, num),
     start: getPreviousRaceResult(driverCurrentSeasonRaces, driver, "quali_pos", currentSeasonDates, num),
