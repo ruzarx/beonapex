@@ -104,7 +104,7 @@ export const getRankInGroup = (feature, driver, driverAverages) => {
 
 
 export const getPreviousRaceResult = (raceData, driver, feature, raceDates, n_past_race) => {
-const currentDate = raceDates[raceDates.length - n_past_race]
+const currentDate = raceDates[n_past_race]
 const value = raceData.filter(
   (entry) =>
     entry.driver_name === driver &&

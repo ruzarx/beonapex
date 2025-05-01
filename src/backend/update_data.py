@@ -12,11 +12,10 @@ class DataProcessor:
         df, (next_race_data, last_race_data) = self.get_stats()
         # with open('data/next_race_data.json', 'w') as file:
         #     json.dump(next_race_data, file)
-        with open('../data/next_race_data.json', 'w') as file:
+        with open('../../public/data/next_race_data.json', 'w') as file:
             json.dump(next_race_data, file)
-        with open('../data/last_race_data.json', 'w') as file:
+        with open('../../public/data/last_race_data.json', 'w') as file:
             json.dump(last_race_data, file)
-        standings = pd.DataFrame()
         for season_year in range(2024, int(last_race_data['last_race_season']) + 1):
             season_standings = pd.DataFrame()
             for race_number in range(1, 37):
@@ -26,15 +25,14 @@ class DataProcessor:
                 season_standings = pd.concat([season_standings, current_standings])
             car_numbers = df[df['season_year'] == season_year][['driver_name', 'car_number']].drop_duplicates()
             season_standings = season_standings.merge(car_numbers, on='driver_name')
-            standings = pd.concat([standings, season_standings])
-        standings = standings.merge(df[['season_year', 'race_number', 'race_date']].drop_duplicates(), on=['season_year', 'race_number'])
-        standings.to_json('../data/standings.json', orient='records')
-        fantasy_group_standings = standings[
-            (standings['season_year'] == int(last_race_data['last_race_season'])) &
-             (standings['race_number'] == int(last_race_data['last_race_number']))]
-        groups = self.make_fantasy_groups(fantasy_group_standings)
-        df = df.merge(groups, on='driver_name', how='left')
-        df.to_json('../data/data.json', orient='records')
+            season_standings = season_standings.merge(df[['season_year', 'race_number', 'race_date']].drop_duplicates(), on=['season_year', 'race_number'])
+            season_standings.to_json(f'../../public/data/standings_{season_year}.json', orient='records')
+            fantasy_group_standings = season_standings[
+                (season_standings['season_year'] == int(last_race_data['last_race_season'])) &
+                (season_standings['race_number'] == int(last_race_data['last_race_number']))]
+            groups = self.make_fantasy_groups(fantasy_group_standings)
+            season_df = df[df['season_year'] == season_year].merge(groups, on='driver_name', how='left')
+            season_df.to_json(f'../../public/data/data_{season_year}.json', orient='records')
         return
 
     def get_stats(self) -> Tuple[pd.DataFrame, Tuple[Any]]:
