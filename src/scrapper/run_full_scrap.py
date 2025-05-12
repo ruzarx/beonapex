@@ -31,7 +31,7 @@ def make_csv_from_res(data, season, race_number, name):
     return
 
 for season in [2025]:
-    for race_number in range(10, 15):
+    for race_number in range(13, 36):
         # if (season, race_number) not in available_races:
         print(season, race_number)
         is_success = scrap_race(season, race_number)
