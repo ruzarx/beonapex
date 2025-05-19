@@ -40,6 +40,20 @@ penalties_driver = {
         'amount': 10,
         'race': 2,
     },
+    6: {
+        'season': 2025,
+        'driver_name': 'Chris Buescher',
+        'type': 'season_points',
+        'amount': 60,
+        'race': 12,
+    },
+    7: {
+        'season': 2025,
+        'driver_name': 'Chris Buescher',
+        'type': 'playoff_points',
+        'amount': 5,
+        'race': 12,
+    },
 }
 
 penalties_team = {
@@ -69,5 +83,19 @@ penalties_team = {
         'type': 'season_points',
         'amount': 10,
         'race': 2,
+    },
+    5: {
+        'season': 2025,
+        'driver_name': 'Chris Buescher',
+        'type': 'season_points',
+        'amount': 60,
+        'race': 12,
+    },
+    6: {
+        'season': 2025,
+        'driver_name': 'Chris Buescher',
+        'type': 'playoff_points',
+        'amount': 5,
+        'race': 12,
     },
 }
